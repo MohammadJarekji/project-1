@@ -71,7 +71,7 @@ app.get('/test2', (req, res) => {
 
 // For all routes, send back the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.resolve(distPath, 'index.html'));
 });
 
 // 3) Mongoose schema with lowercase example
