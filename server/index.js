@@ -54,11 +54,11 @@ app.use('/api/production', productionRoutes);
 app.use('/api/diesel', dieselRoutes);
 
 // Serve static files from React (the dist folder)
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // For all routes, send back the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
 
 // 3) Mongoose schema with lowercase example
