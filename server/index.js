@@ -61,7 +61,7 @@ console.log("distPath: ", distPath);
 app.use(express.static(distPath));
 
 app.get('/test', (req, res) => {
-  res.write(path.join(__dirname));
+  res.send(path.join(__dirname)); // Sends the directory path as a response
 });
 
 // For all routes, send back the React app
