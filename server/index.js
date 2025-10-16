@@ -53,7 +53,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/diesel', dieselRoutes);
 
-var distPath = path.join(__dirname, '..', '..', 'dist');
+var distPath = path.join(__dirname, '..','..', '..', 'dist');
 
 
 console.log("distPath: ", distPath);
