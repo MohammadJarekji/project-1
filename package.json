@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node server/index.js",
-   "heroku-postbuild": "npm install --prefix client/Project-1 && npm run build --prefix client/Project-1",
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client/Project-1\""
+    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client && npm install --prefix server && npm run start --prefix server",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
   },
   "dependencies": {
     "concurrently": "^9.2.1"
