@@ -53,8 +53,16 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/diesel', dieselRoutes);
 
+var distPath = path.join(__dirname, 'dist');
+
+console.log("distPath: ", distPath);
+
 // Serve static files from React (the dist folder)
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(distPath));
+
+app.get('/test', (req, res) => {
+  res.write(path.join(__dirname));
+});
 
 // For all routes, send back the React app
 app.get('*', (req, res) => {
