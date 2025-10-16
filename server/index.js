@@ -53,7 +53,8 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/diesel', dieselRoutes);
 
-var distPath = path.join(__dirname, 'dist');
+var distPath = path.join(__dirname, '..', '..', 'dist');
+
 
 console.log("distPath: ", distPath);
 
@@ -62,6 +63,10 @@ app.use(express.static(distPath));
 
 app.get('/test', (req, res) => {
   res.send(path.join(__dirname)); // Sends the directory path as a response
+});
+
+app.get('/test2', (req, res) => {
+  res.send(distPath); // Sends the directory path as a response
 });
 
 // For all routes, send back the React app
