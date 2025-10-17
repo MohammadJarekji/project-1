@@ -68,7 +68,7 @@ const EditProductsModal = ({productObj, fetchProducts, uom, category, warehouse,
                 userId: userData._id
             };
             try{
-                     const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/product/${productObj._id}`,{
+                     const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/product/${productObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',

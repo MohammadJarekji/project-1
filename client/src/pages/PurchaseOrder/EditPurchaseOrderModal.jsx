@@ -75,7 +75,7 @@ const EditPurchaseOrderModal = ({purchaseOrderObj, fetchPurchaseOrder, uom, curr
                 userId: userData._id
             };
             try{
-                     const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/purchaseOrder/${purchaseOrderObj._id}`,{
+                     const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/purchaseOrder/${purchaseOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',

@@ -8,7 +8,7 @@ const DeleteCurrencyModal = ({currencyObj, fetchCurrency}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/currency/${id}`,{
+                            const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/currency/${id}`,{
                                     method:'DELETE',
                                 }
                             );

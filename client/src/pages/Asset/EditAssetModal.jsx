@@ -82,7 +82,7 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/asset/${assetObj._id}`,{
+                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/asset/${assetObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

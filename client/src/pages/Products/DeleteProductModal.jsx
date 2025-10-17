@@ -10,7 +10,7 @@ const DeleteProductModal = ({productObj,fetchProducts}) => {
 
                     const handleDelete = async (id)=>{           
                     try{
-                        const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/product/${id}`,{
+                        const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/product/${id}`,{
                                 method:'DELETE',
                             }
                         );

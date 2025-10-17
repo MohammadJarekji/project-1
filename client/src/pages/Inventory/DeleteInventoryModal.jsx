@@ -10,7 +10,7 @@ const DeleteInventoryModal = ({inventoryObj,fetchInventory}) => {
 
                     const handleDelete = async (id)=>{           
                     try{
-                        const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/inventory/${id}`,{
+                        const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/inventory/${id}`,{
                                 method:'DELETE',
                             }
                         );

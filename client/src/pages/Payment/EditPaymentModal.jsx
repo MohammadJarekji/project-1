@@ -39,7 +39,7 @@ const EditPaymentModal = ({paymentObj, fetchPayment}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/payment/${paymentObj._id}`,{
+                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/payment/${paymentObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

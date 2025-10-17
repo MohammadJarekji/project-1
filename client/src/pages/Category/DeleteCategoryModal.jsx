@@ -8,7 +8,7 @@ const DeleteCategoryModal = ({categoryObj, fetchCategory}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/category/${id}`,{
+                            const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/category/${id}`,{
                                     method:'DELETE',
                                 }
                             );
