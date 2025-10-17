@@ -53,26 +53,12 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/diesel', dieselRoutes);
 
-var distPath = path.join(__dirname, 'dist');  // No need to go up, 'dist' is inside 'server' folder
-
-console.log("distPath: ", distPath);  // For debugging to check the resolved path
-
-// Serve static files from React (the dist folder inside the server folder)
-app.use(express.static(distPath));
-
-// For testing, send the __dirname path
-app.get('/test', (req, res) => {
-  res.send(path.join(__dirname)); // Sends the current directory path
-});
-
-// For testing, send the distPath path
-app.get('/test2', (req, res) => {
-  res.send(distPath); // Sends the dist directory path
-});
+// Serve static files from React (the dist folder)
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // For all routes, send back the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(distPath, 'index.html')); // Serve the React app
+  res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
 });
 
 // 3) Mongoose schema with lowercase example
