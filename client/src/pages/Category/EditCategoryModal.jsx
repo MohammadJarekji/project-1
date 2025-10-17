@@ -39,7 +39,7 @@ const EditCategoryModal = ({categoryObj, fetchCategory}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`http://localhost:3000/api/category/${categoryObj._id}`,{
+                         const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/category/${categoryObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

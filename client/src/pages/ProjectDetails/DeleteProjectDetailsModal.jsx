@@ -8,7 +8,7 @@ const DeleteProjectDetailsModal = ({projectDetailsObj, fetchProjectDetails}) => 
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`http://localhost:3000/api/projectDetails/${id}`,{
+                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/projectDetails/${id}`,{
                                     method:'DELETE',
                                 }
                             );

@@ -10,7 +10,7 @@ const DeleteTransferModal = ({transferObj,fetchTransfer}) => {
 
                     const handleDelete = async (id)=>{           
                     try{
-                        const response = await fetch(`http://localhost:3000/api/transfer/${id}`,{
+                        const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/transfer/${id}`,{
                                 method:'DELETE',
                             }
                         );

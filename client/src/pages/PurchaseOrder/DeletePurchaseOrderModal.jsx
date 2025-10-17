@@ -10,7 +10,7 @@ const DeletePurchaseOrderModal = ({purchaseOrderObj,fetchPurchaseOrder}) => {
 
                     const handleDelete = async (id)=>{           
                     try{
-                        const response = await fetch(`http://localhost:3000/api/purchaseOrder/${id}`,{
+                        const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/purchaseOrder/${id}`,{
                                 method:'DELETE',
                             }
                         );

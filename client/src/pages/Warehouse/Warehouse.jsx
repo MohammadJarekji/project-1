@@ -33,7 +33,7 @@ const Warehouse = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/warehouse/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/warehouse/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -57,7 +57,7 @@ const Warehouse = () => {
 
     const fetchWarehouse = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/warehouse',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/warehouse',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

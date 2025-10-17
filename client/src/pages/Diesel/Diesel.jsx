@@ -43,7 +43,7 @@ const Diesel = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/diesel/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/diesel/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -79,7 +79,7 @@ const Diesel = () => {
 
     const fetchDiesel = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/diesel',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/diesel',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

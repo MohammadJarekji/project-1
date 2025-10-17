@@ -8,7 +8,7 @@ const DeleteUOMModal = ({uomObj, fetchUOM}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`http://localhost:3000/api/uom/${id}`,{
+                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/uom/${id}`,{
                                     method:'DELETE',
                                 }
                             );

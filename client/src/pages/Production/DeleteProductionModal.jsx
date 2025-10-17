@@ -8,7 +8,7 @@ const DeleteProductionModal = ({productionObj, fetchProduction}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`http://localhost:3000/api/production/${id}`,{
+                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/production/${id}`,{
                                     method:'DELETE',
                                 }
                             );

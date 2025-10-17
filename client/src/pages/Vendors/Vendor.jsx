@@ -43,7 +43,7 @@ const Vendor = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/vendor/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/vendor/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -67,7 +67,7 @@ const Vendor = () => {
 
     const fetchVendor = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/vendor',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/vendor',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

@@ -8,7 +8,7 @@ const DeleteWarehouseModal = ({warehouseObj, fetchWarehouse}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`http://localhost:3000/api/warehouse/${id}`,{
+                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/warehouse/${id}`,{
                                     method:'DELETE',
                                 }
                             );

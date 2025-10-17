@@ -174,7 +174,7 @@ const Inventory = () => {
             };
             try{
     
-                     const res = await fetch('http://localhost:3000/api/inventory/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/inventory/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -198,7 +198,7 @@ const Inventory = () => {
 
     const fetchInventory = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/inventory',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/inventory',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

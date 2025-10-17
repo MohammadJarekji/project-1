@@ -8,7 +8,7 @@ const DeleteStaffModal = ({staffObj, fetchStaff}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`http://localhost:3000/api/staff/${id}`,{
+                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/staff/${id}`,{
                                     method:'DELETE',
                                 }
                             );

@@ -32,7 +32,7 @@ const Currency = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/currency/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/currency/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -56,7 +56,7 @@ const Currency = () => {
 
     const fetchCurrency = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/currency',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/currency',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

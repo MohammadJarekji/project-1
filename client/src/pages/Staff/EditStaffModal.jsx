@@ -77,7 +77,7 @@ const EditStaffModal = ({staffObj, fetchStaff}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`http://localhost:3000/api/staff/${staffObj._id}`,{
+                         const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/staff/${staffObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

@@ -32,7 +32,7 @@ const Payment = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/payment/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/payment/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -56,7 +56,7 @@ const Payment = () => {
 
     const fetchPayment = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/payment',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/payment',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

@@ -39,7 +39,7 @@ const EditUOMModal = ({uomObj, fetchUOM}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`http://localhost:3000/api/uom/${uomObj._id}`,{
+                         const res = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/uom/${uomObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

@@ -8,7 +8,7 @@ const DeleteDieselModal = ({dieselObj, fetchDiesel}) => {
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`http://localhost:3000/api/diesel/${id}`,{
+                            const response = await fetch(`import.meta.env.VITE_URL_BASE_APP/api/diesel/${id}`,{
                                     method:'DELETE',
                                 }
                             );
