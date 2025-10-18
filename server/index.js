@@ -24,6 +24,8 @@ const projectDetailsRoutes = require('./routes/projectDetailsRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const productionRoutes = require('./routes/productionRoutes');
 const dieselRoutes = require('./routes/dieselRoutes');
+const paymentOrderRoutes = require('./routes/paymentOrderRoutes');
+const receiptOrderRoutes = require('./routes/receiptOrderRoutes');
 
 const app = express();
 
@@ -52,6 +54,8 @@ app.use('/api/projectDetails', projectDetailsRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/diesel', dieselRoutes);
+app.use('/api/paymentOrder', paymentOrderRoutes);
+app.use('/api/receiptOrder', receiptOrderRoutes);
 
 // Serve static files from React (the dist folder)
 app.use(express.static(path.join(__dirname, '../client/dist')));

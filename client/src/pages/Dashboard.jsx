@@ -59,6 +59,8 @@ const Dashboard = () => {
       { key: '2', icon: <AiOutlineUsergroupAdd />, label: <Link to="/vendor">Vendors</Link> },
       { key: '9', icon: <AiOutlineFileText />, label: <Link to="/purchaseOrder">Purchase Order</Link> },
       { key: '10', icon: <AiOutlineFileText />, label: <Link to="/salesOrder">Sales Order</Link> },
+      { key: '20', icon: <AiOutlineFileText />, label: <Link to="/paymentOrder">Payment Order</Link> },
+      { key: '21', icon: <AiOutlineFileText />, label: <Link to="/receiptOrder">Receipt Order</Link> },
       { key: '15', icon: <AiOutlineSwap />, label: <Link to="/transfer">Transfer</Link> },
     ],
   },
@@ -113,6 +115,8 @@ const Dashboard = () => {
     '/inventory': '17',
     '/production': '18',
     '/diesel': '19',
+    '/paymentOrder': '20',
+    '/receiptOrder': '21',
   };
 
   

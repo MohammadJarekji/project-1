@@ -25,6 +25,8 @@ import ProjectDetails from './pages/ProjectDetails/ProjectDetails';
 import Inventory from './pages/Inventory/Inventory';
 import Production from './pages/Production/Production';
 import Diesel from './pages/Diesel/Diesel';
+import PaymentOrder from './pages/PaymentOrder/PaymentOrder';
+import ReceiptOrder from './pages/ReceiptOrder/ReceiptOrder';
 
 const App = () => {
   const {isAuthenticated}=useAuth();
@@ -74,6 +76,8 @@ const App = () => {
           <Route path="inventory" element={<Inventory />} />
           <Route path="production" element={<Production />} />
           <Route path="diesel" element={<Diesel />} />
+          <Route path="paymentOrder" element={<PaymentOrder />} />
+          <Route path="receiptOrder" element={<ReceiptOrder />} />
           <Route index element={<Navigate to="dashboard" />} /> {/* default redirect */}
         </Route>
 
