@@ -173,7 +173,6 @@ const Inventory = () => {
                 userId: userData._id
             };
             try{
-    
                      const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/inventory/add',{
                     method:'POST',
                     headers:{

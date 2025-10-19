@@ -43,53 +43,48 @@ const Dashboard = () => {
     const menuItems = [
   {
     type: 'group',
-    label: 'Inventory & Products',
-    children: [
-      { key: '1', icon: <AiOutlineShoppingCart />, label: <Link to="/dashboard">Products</Link> },
-      { key: '3', icon: <AiOutlineTags />, label: <Link to="/category">Category</Link> },
-      { key: '5', icon: <AiOutlineFieldNumber />, label: <Link to="/uom">UOM</Link> },
-      { key: '4', icon: <AiOutlineDollarCircle />, label: <Link to="/currency">Currency</Link> },
-      { key: '17', icon: <AiOutlineDatabase />, label: <Link to="/inventory">Inventory</Link> },
-    ],
-  },
-  {
-    type: 'group',
-    label: 'Vendors & Orders',
+    label: 'Vendors & PO',
     children: [
       { key: '2', icon: <AiOutlineUsergroupAdd />, label: <Link to="/vendor">Vendors</Link> },
       { key: '9', icon: <AiOutlineFileText />, label: <Link to="/purchaseOrder">Purchase Order</Link> },
-      { key: '10', icon: <AiOutlineFileText />, label: <Link to="/salesOrder">Sales Order</Link> },
+      { key: '7', icon: <AiOutlineDollarCircle />, label: <Link to="/payment">Payment</Link> },
       { key: '20', icon: <AiOutlineFileText />, label: <Link to="/paymentOrder">Payment Order</Link> },
-      { key: '21', icon: <AiOutlineFileText />, label: <Link to="/receiptOrder">Receipt Order</Link> },
-      { key: '15', icon: <AiOutlineSwap />, label: <Link to="/transfer">Transfer</Link> },
     ],
   },
   {
     type: 'group',
-    label: 'Customers & Payments',
+    label: 'Customers & SO',
     children: [
-      { key: '7', icon: <AiOutlineDollarCircle />, label: <Link to="/payment">Payment</Link> },
-      { key: '8', icon: <AiOutlineUser />, label: <Link to="/customer">Customer</Link> },
+      
+      { key: '8', icon: <AiOutlineUser />, label: <Link to="/customer">Customers</Link> },
+      { key: '10', icon: <AiOutlineFileText />, label: <Link to="/salesOrder">Sales Order</Link> },
+      { key: '21', icon: <AiOutlineFileText />, label: <Link to="/receiptOrder">Receipt Order</Link> },
     ],
   },
   {
     type: 'group',
     label: 'Operations',
     children: [
-      { key: '6', icon: <AiOutlineHome />, label: <Link to="/warehouse">Warehouse</Link> },
       { key: '18', icon: <AiOutlineSetting />, label: <Link to="/production">Production</Link> },
       { key: '14', icon: <AiOutlineTool />, label: <Link to="/assembly">Assembly Order</Link> },
-      { key: '19', icon: <AiOutlineThunderbolt />, label: <Link to="/diesel">Diesel</Link> },
-      { key: '12', icon: <AiOutlineAudit />, label: <Link to="/asset">Asset</Link> },
     ],
   },
   {
     type: 'group',
-    label: 'People & Projects',
+    label: 'Products & tools',
     children: [
+      { key: '6', icon: <AiOutlineHome />, label: <Link to="/warehouse">Warehouse</Link> },
+      { key: '1', icon: <AiOutlineShoppingCart />, label: <Link to="/dashboard">Products</Link> },
+      { key: '3', icon: <AiOutlineTags />, label: <Link to="/category">Category</Link> },
+      { key: '5', icon: <AiOutlineFieldNumber />, label: <Link to="/uom">UOM</Link> },
+      { key: '4', icon: <AiOutlineDollarCircle />, label: <Link to="/currency">Currency</Link> },
+      { key: '17', icon: <AiOutlineDatabase />, label: <Link to="/inventory">Inventory</Link> },
       { key: '11', icon: <AiOutlineTeam />, label: <Link to="/staff">Staff</Link> },
       { key: '13', icon: <AiOutlineProject />, label: <Link to="/project">Project</Link> },
       { key: '16', icon: <AiOutlineFolderOpen />, label: <Link to="/projectDetails">Project Details</Link> },
+      { key: '19', icon: <AiOutlineThunderbolt />, label: <Link to="/diesel">Diesel</Link> },
+      { key: '12', icon: <AiOutlineAudit />, label: <Link to="/asset">Asset</Link> },
+      { key: '15', icon: <AiOutlineSwap />, label: <Link to="/transfer">Transfer</Link> },
     ],
   },
 ];

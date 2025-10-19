@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Input, Select, Row, Col } from 'antd';
+import { Button, Modal, Form, Input, Select, Row, Col, InputNumber } from 'antd';
 import{useAuth} from '../../contexts/AuthContext';
 import {EditFilled} from '@ant-design/icons';
 

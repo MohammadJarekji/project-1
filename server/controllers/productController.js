@@ -9,13 +9,9 @@ const mongoose = require('mongoose');
 
 exports.addProduct = async (req, res) =>{
     try{
-        const {name, description, quantity, uomId, price, currencyId, categoryId, warehouseId, minStkLevel,
+        const {name, description, uomId, price, currencyId, categoryId, warehouseId, minStkLevel,
             maxStkLevel, reorderPoint, vendorId, blocked, assembled, remark, userId } = req.body;
-
-        
-        // Convert decimal quantity
-        const decimalQuantity = mongoose.Types.Decimal128.fromString(quantity.toString());
-        
+    
         // Convert decimal price
         const decimalPrice = mongoose.Types.Decimal128.fromString(price.toString());
 
@@ -31,8 +27,8 @@ exports.addProduct = async (req, res) =>{
         // Create a new product
         const newProduct = new Product({
             name, 
-            description, 
-            quantity:decimalQuantity, 
+            description,
+            quantity:0,  
             uomId, 
             price:decimalPrice, 
             currencyId, 
@@ -91,11 +87,8 @@ exports.getProducts = async (req, res)=>{
 exports.updateProduct = async (req, res)=>{
     try{
         const{ id } = req.params;
-        const {name, description, quantity, uomId, price, currencyId, categoryId, warehouseId, minStkLevel,
+        const {name, description, uomId, price, currencyId, categoryId, warehouseId, minStkLevel,
             maxStkLevel, reorderPoint, vendorId, blocked, assembled, remark, userId } = req.body;
-
-        // Convert decimal quantity
-        const decimalQuantity = mongoose.Types.Decimal128.fromString(quantity.toString());
         
         // Convert decimal price
         const decimalPrice = mongoose.Types.Decimal128.fromString(price.toString());
@@ -113,7 +106,6 @@ exports.updateProduct = async (req, res)=>{
         const updatedProduct = await Product.findByIdAndUpdate(id, {
             name, 
             description, 
-            quantity:decimalQuantity, 
             uomId, 
             price:decimalPrice, 
             currencyId, 

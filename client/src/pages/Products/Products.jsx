@@ -152,7 +152,6 @@ const Products = () => {
                 userId: userData._id
             };
             try{
-    
                      const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/product/add',{
                     method:'POST',
                     headers:{
