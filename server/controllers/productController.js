@@ -145,3 +145,49 @@ exports.deleteProduct = async (req, res)=>{
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 }
+
+exports.getLowStockProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+
+    // Convert Decimal128 to numbers and filter
+    const lowStockProducts = products.filter(p => {
+      const quantity = parseFloat(p.quantity?.toString() || '0');
+      const minStkLevel = parseFloat(p.minStkLevel?.toString() || '0');
+      return quantity < minStkLevel;
+    });
+
+    res.json({ lowStockProducts });
+  } catch (error) {
+    console.error('Error fetching low stock products:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+exports.getLowStockProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+
+    // Filter products where quantity < minStkLevel
+    const lowStockProducts = products.filter(p => {
+      const quantity = p.quantity ? parseFloat(p.quantity.toString()) : 0;
+      const minStkLevel = p.minStkLevel ? parseFloat(p.minStkLevel.toString()) : 0;
+      return quantity < minStkLevel;
+    });
+
+    // Format for clean response (optional)
+    const formatted = lowStockProducts.map(p => ({
+      _id: p._id,
+      name: p.name,
+      quantity: p.quantity ? parseFloat(p.quantity.toString()) : 0,
+      minStkLevel: p.minStkLevel ? parseFloat(p.minStkLevel.toString()) : 0,
+      warehouseId: p.warehouseId,
+    }));
+
+    res.status(200).json({ lowStockProducts: formatted });
+  } catch (error) {
+    console.error('Error fetching low stock products:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

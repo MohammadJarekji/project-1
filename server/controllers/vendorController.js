@@ -91,3 +91,13 @@ exports.deleteVendor = async (req, res)=>{
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 }
+
+exports.getVendorsCount = async (req, res) => {
+  try {
+    const count = await Vendor.countDocuments(); // Count all customers
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching vendor count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

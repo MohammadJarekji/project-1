@@ -4,9 +4,9 @@ import { useLocation } from 'react-router-dom';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  DollarOutlined,
   UserOutlined,
-  VideoCameraOutlined,
+  LogoutOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 
 import {
@@ -27,9 +27,10 @@ import {
   AiOutlineProject,
   AiOutlineAudit,
   AiOutlineThunderbolt,
+  AiFillDashboard,
 } from 'react-icons/ai';
 
-import { Button, Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, theme, Avatar, Dropdown, Space } from 'antd';
 import Products from './Products/Products';
 import { Link, Outlet } from 'react-router-dom';
 
@@ -41,6 +42,7 @@ const Dashboard = () => {
     const location = useLocation();
     const { SubMenu } = Menu;
     const menuItems = [
+  { key: '22', icon: <AiFillDashboard />, label: <Link to="/firstPage">Dashboard</Link> },
   {
     type: 'group',
     label: 'Vendors & PO',
@@ -112,13 +114,14 @@ const Dashboard = () => {
     '/diesel': '19',
     '/paymentOrder': '20',
     '/receiptOrder': '21',
+    '/firstPage':'22'
   };
 
   
 // Helper to find open keys based on selectedKey
 function getOpenKeysFromSelectedKey(selectedKey) {
   for (const group of menuItems) {
-    if (group.children.some(item => item.key === selectedKey)) {
+    if (group.children && group.children.some(item => item.key === selectedKey)) {
       return [group.label];
     }
   }
@@ -150,6 +153,31 @@ const selectedKey = Object.entries(pathToKey)
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+
+  const avatarMenuItems = [
+  {
+    key: 'profile',
+    label: 'Profile',
+    icon: <SettingOutlined />,
+    onClick: () => {
+      console.log('Go to profile');
+    },
+  },
+  {
+    key: 'logout',
+    label: 'Logout',
+    icon: <LogoutOutlined />,
+    danger: true,
+    onClick: () => {
+      handleLogout();
+    },
+  },
+];
+
+// const avatarMenu = (
+//   <Menu items={avatarMenuItems} />
+// );
+
     return (
 
  <Layout style={{height:'100vh'}}>
@@ -162,28 +190,40 @@ const selectedKey = Object.entries(pathToKey)
     >
       <div className="demo-logo-vertical" />
       <div style={{ height: 'calc(100% - 64px)', overflowY: 'auto', paddingTop: 16 }}>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          openKeys={openKeys}
-          onOpenChange={onOpenChange}
-          style={{ height: '100%' }}
+<Menu
+  theme="dark"
+  mode="inline"
+  selectedKeys={[selectedKey]}
+  openKeys={openKeys}
+  onOpenChange={onOpenChange}
+  style={{ height: '100%' }}
+>
+  {menuItems.map(item => {
+    // If it's a group with children
+    if (item.children) {
+      return (
+        <Menu.SubMenu
+          key={item.label}
+          title={item.label}
+          icon={item.children[0]?.icon}
         >
-          {menuItems.map(group => (
-            <Menu.SubMenu
-              key={group.label}
-              title={group.label}
-              icon={group.children[0]?.icon}
-            >
-              {group.children.map(item => (
-                <Menu.Item key={item.key} icon={item.icon}>
-                  {item.label}
-                </Menu.Item>
-              ))}
-            </Menu.SubMenu>
+          {item.children.map(child => (
+            <Menu.Item key={child.key} icon={child.icon}>
+              {child.label}
+            </Menu.Item>
           ))}
-        </Menu>
+        </Menu.SubMenu>
+      );
+    }
+
+    // If it's a single menu item (like Dashboard)
+    return (
+      <Menu.Item key={item.key} icon={item.icon}>
+        {item.label}
+      </Menu.Item>
+    );
+  })}
+</Menu>
       </div>
     </Sider>
       <Layout>
@@ -198,9 +238,16 @@ const selectedKey = Object.entries(pathToKey)
               height: 64,
             }}
           />
-        <Button style={{float:'right', margin:'10px'}} size="large" type="primary" onClick={handleLogout}>
+          <div style={{ float: 'right',  marginRight: '16px' }}>
+              <Dropdown menu={{items:avatarMenuItems}} trigger={['click']} placement="bottomRight">
+          <div style={{ cursor: 'pointer' }}>
+            <Avatar  size={'large'} icon={<UserOutlined />} />
+          </div>
+        </Dropdown>
+        </div>
+        {/* <Button style={{float:'right', margin:'10px'}} size="large" type="primary" onClick={handleLogout}>
           Logout
-        </Button>
+        </Button> */}
         </Header>
         <Content
           style={{
@@ -209,6 +256,7 @@ const selectedKey = Object.entries(pathToKey)
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            overflowY: 'auto',
           }}
         >
                   <h2> Welcome {userData.name}</h2>

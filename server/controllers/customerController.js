@@ -103,3 +103,13 @@ exports.deleteCustomer = async (req, res)=>{
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 }
+
+exports.getCustomerCount = async (req, res) => {
+  try {
+    const count = await Customer.countDocuments(); // Count all customers
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching customer count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
