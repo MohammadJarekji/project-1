@@ -5,6 +5,7 @@ import {
   UserOutlined,
   DropboxOutlined,
   DollarOutlined,
+  SolutionOutlined,
 } from '@ant-design/icons';
 import { BarChart } from '@mui/x-charts/BarChart';
 import BarChartComponent from './BarChartComponent';
@@ -51,12 +52,12 @@ const FirstPage = () => {
     {
       title: 'Vendors',
       value: vendorCount,
-      prefix: <DollarOutlined />,
+      prefix: <UserOutlined />,
     },
     {
       title: 'Total Receipts',
       value: orderCounts.receiptOrders,
-      prefix: <ShoppingCartOutlined />,
+      prefix: <SolutionOutlined />,
     },
   ];
 
