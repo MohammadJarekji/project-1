@@ -18,7 +18,7 @@ const BarChartComponent = () => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/dashboard/last-12-months');
+        const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/dashboard/last-12-months');
         const json = await res.json();
 
         // Helper to format YYYY-MM and fill missing months with 0

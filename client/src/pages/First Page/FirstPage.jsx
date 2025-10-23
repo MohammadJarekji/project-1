@@ -77,7 +77,7 @@ const FirstPage = () => {
   useEffect(() => {
     const fetchCustomerCount = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/customer/count',{
+        const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/customer/count',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -97,7 +97,7 @@ const FirstPage = () => {
   useEffect(() => {
     const fetchVendorCount = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/vendor/count',{
+        const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/vendor/count',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -117,7 +117,7 @@ const FirstPage = () => {
     useEffect(() => {
     const fetchOrderCounts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/dashboard/order-counts', {
+        const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/dashboard/order-counts', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const FirstPage = () => {
     useEffect(() => {
     const fetchTotalStock = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/dashboard/products/total-stock', {
+        const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/dashboard/products/total-stock', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ const FirstPage = () => {
   useEffect(() => {
   const fetchLowStock = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/product/low-stock');
+      const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/product/low-stock');
       const data = await response.json();
       setLowStockProducts(data.lowStockProducts);
     } catch (error) {
@@ -171,7 +171,7 @@ const FirstPage = () => {
 useEffect(() => {
     const fetchTopProducts = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/dashboard/top-selling-products');
+        const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/dashboard/top-selling-products');
         const data = await res.json();
         setTopProducts(data.topProducts);
       } catch (err) {
