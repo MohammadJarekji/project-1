@@ -58,7 +58,7 @@ const App = () => {
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
         >
           {/* Nested routes inside Dashboard */}
-          <Route path="dashboard" element={<Products />} />
+          <Route path="products" element={<Products />} />
           <Route path="vendor" element={<Vendor />} />
           <Route path="category" element={<Category />} />
           <Route path="currency" element={<Currency />} />
@@ -79,7 +79,7 @@ const App = () => {
           <Route path="diesel" element={<Diesel />} />
           <Route path="paymentOrder" element={<PaymentOrder />} />
           <Route path="receiptOrder" element={<ReceiptOrder />} />
-          <Route path="firstPage" element={<FirstPage />} />
+          <Route path="dashboard" element={<FirstPage />} />
           <Route index element={<Navigate to="dashboard" />} /> {/* default redirect */}
         </Route>
 

@@ -42,7 +42,7 @@ const Dashboard = () => {
     const location = useLocation();
     const { SubMenu } = Menu;
     const menuItems = [
-  { key: '22', icon: <AiFillDashboard />, label: <Link to="/firstPage">Dashboard</Link> },
+  { key: '22', icon: <AiFillDashboard />, label: <Link to="/dashboard">Dashboard</Link> },
   {
     type: 'group',
     label: 'Vendors & PO',
@@ -76,7 +76,7 @@ const Dashboard = () => {
     label: 'Products & tools',
     children: [
       { key: '6', icon: <AiOutlineHome />, label: <Link to="/warehouse">Warehouse</Link> },
-      { key: '1', icon: <AiOutlineShoppingCart />, label: <Link to="/dashboard">Products</Link> },
+      { key: '1', icon: <AiOutlineShoppingCart />, label: <Link to="/products">Products</Link> },
       { key: '3', icon: <AiOutlineTags />, label: <Link to="/category">Category</Link> },
       { key: '5', icon: <AiOutlineFieldNumber />, label: <Link to="/uom">UOM</Link> },
       { key: '4', icon: <AiOutlineDollarCircle />, label: <Link to="/currency">Currency</Link> },
@@ -93,7 +93,7 @@ const Dashboard = () => {
 
       // Map your route paths to menu keys
   const pathToKey = {
-    '/dashboard': '1',
+    '/products': '1',
     '/vendor': '2',
     '/category': '3',
     '/currency': '4',
@@ -114,7 +114,7 @@ const Dashboard = () => {
     '/diesel': '19',
     '/paymentOrder': '20',
     '/receiptOrder': '21',
-    '/firstPage':'22'
+    '/dashboard':'22'
   };
 
   
