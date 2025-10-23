@@ -238,16 +238,16 @@ const selectedKey = Object.entries(pathToKey)
               height: 64,
             }}
           />
-          <div style={{ float: 'right',  marginRight: '16px' }}>
+          {/* <div style={{ float: 'right',  marginRight: '16px' }}>
               <Dropdown menu={{items:avatarMenuItems}} trigger={['click']} placement="bottomRight">
           <div style={{ cursor: 'pointer' }}>
             <Avatar  size={'large'} icon={<UserOutlined />} />
           </div>
         </Dropdown>
-        </div>
-        {/* <Button style={{float:'right', margin:'10px'}} size="large" type="primary" onClick={handleLogout}>
+        </div> */}
+        <Button style={{float:'right', margin:'10px'}} size="large" type="primary" onClick={handleLogout}>
           Logout
-        </Button> */}
+        </Button>
         </Header>
         <Content
           style={{
