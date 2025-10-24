@@ -13,20 +13,20 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Decimal128,
     },
     uomId:{
-        type:mongoose.Schema.Types.ObjectId, ref:"UOM",
+        type:mongoose.Schema.Types.ObjectId, ref:"UOM", required:true,
     },
     price:{
         type: mongoose.Schema.Types.Decimal128,
         required: true,
     },
     currencyId:{
-        type:mongoose.Schema.Types.ObjectId, ref:"Currency", required: true 
+        type:mongoose.Schema.Types.ObjectId, ref:"Currency", required: true, 
     },
     categoryId:{
         type:mongoose.Schema.Types.ObjectId, ref:"Category", 
     },
     warehouseId:{
-        type:mongoose.Schema.Types.ObjectId, ref:"Warehouse", required: true 
+        type:mongoose.Schema.Types.ObjectId, ref:"Warehouse",
     },
     minStkLevel:{
         type: mongoose.Schema.Types.Decimal128,

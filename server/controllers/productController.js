@@ -16,13 +16,22 @@ exports.addProduct = async (req, res) =>{
         const decimalPrice = mongoose.Types.Decimal128.fromString(price.toString());
 
         // Convert decimal minStkLevel
-        const decimalMinStkLvl = mongoose.Types.Decimal128.fromString(minStkLevel.toString());
+        const decimalMinStkLvl =
+            minStkLevel !== undefined && minStkLevel !== null && minStkLevel !== ''
+              ? mongoose.Types.Decimal128.fromString(minStkLevel.toString())
+              : null;
 
         // Convert decimal maxStkLevel
-        const decimalMaxStkLvl = mongoose.Types.Decimal128.fromString(maxStkLevel.toString());
+        const decimalMaxStkLvl =
+            maxStkLevel !== undefined && maxStkLevel !== null && maxStkLevel !== ''
+              ? mongoose.Types.Decimal128.fromString(maxStkLevel.toString())
+              : null;
 
         // Convert decimal reorderPoint
-        const decimalReorderPoint = mongoose.Types.Decimal128.fromString(reorderPoint.toString());
+        const decimalReorderPoint =
+            reorderPoint !== undefined && reorderPoint !== null && reorderPoint !== ''
+              ? mongoose.Types.Decimal128.fromString(maxStkLevel.toString())
+              : null;
 
         // Create a new product
         const newProduct = new Product({

@@ -192,7 +192,7 @@ exports.deleteSalesOrder = async (req, res)=>{
     await product.save();
 
     // 4. Delete the sales order
-    await order.remove();
+    await order.deleteOne();
 
         return res.status(200).json({ success: true, message: 'SalesOrder deleted successfully' });
     } catch (error) {
