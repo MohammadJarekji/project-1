@@ -186,7 +186,7 @@ exports.deletePurchaseOrder = async (req, res)=>{
     await product.save();
 
     // 4. Delete the purchase order
-    await order.remove();
+    await order.deleteOne();
 
         return res.status(200).json({ success: true, message: 'PurchaseOrder deleted successfully' });
     } catch (error) {
