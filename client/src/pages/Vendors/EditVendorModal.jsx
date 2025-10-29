@@ -49,7 +49,7 @@ const EditVendorModal = ({vendorObj, fetchVendor, payment}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`http://localhost:3000/api/vendor/${vendorObj._id}`,{
+                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/vendor/${vendorObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

@@ -113,7 +113,7 @@ const EditSalesOrderModal = ({salesOrderObj, fetchSalesOrder, uom, currency, cus
                 userId: userData._id
             };
             try{
-                     const res = await fetch(`http://localhost:3000/api/salesOrder/${salesOrderObj._id}`,{
+                     const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/salesOrder/${salesOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
