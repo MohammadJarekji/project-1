@@ -148,12 +148,13 @@ console.log("Data: ",data)
             setFormData(values)
              const updatedData = {
                 ...values,
-                userId: userData._id
+                userId: userData._id,
+                date:dayjs().format('M/D/YYYY'),
             };
             try{
     
                     //  const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder/add',{
-                    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder/add',{
+                    const res = await fetch('http://localhost:3000/api/paymentOrder/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -249,6 +250,12 @@ console.log("Data: ",data)
     key: 'currency',
     ...getColumnSearchProps('currency', (record) => getCurrencyLabel(record.currencyId)),
     render: (text, record) => getCurrencyLabel(record.currencyId),
+  },
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+    render: (value) => dayjs(value).format('M/D/YYYY'),
   },
     {
     title: 'Remark',

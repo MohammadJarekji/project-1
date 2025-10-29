@@ -65,7 +65,7 @@ const Asset = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/asset/add',{
+                     const res = await fetch('http://localhost:3000/api/asset/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -133,85 +133,109 @@ const Asset = () => {
     title: 'Serial Number',
     dataIndex: 'serialNumber',
     key: 'serialNumber',
+    fixed:'left',
+    width:150,
     render: text => <a>{text}</a>,
   },
   {
     title: 'Asset Name',
     dataIndex: 'name',
     key: 'name',
+    width:150,
   },
   {
     title: 'Asset Type',
     dataIndex: 'assetType',
     key: 'assetType',
+    width:150,
   },
   {
     title: 'Acquisition Cost',
     dataIndex: 'acquisitionCost',
     key: 'acquisitionCost',
+    width:150,
   },
   {
     title: 'Vendor',
     dataIndex: 'vendor',
     key: 'vendor',
+    width:150,
     render: (text, record) => getVendorLabel(record.vendorId),
   },
   {
     title: 'Location',
     dataIndex: 'location',
     key: 'location',
+    width:150,
   },
   {
     title: 'Assigned Staff',
     dataIndex: 'assignedStaff',
     key: 'assignedStaff',
+    width:150,
     render: (text, record) => getStaffLabel(record.staffId),
   },
   {
     title: 'Depreciation Method',
     dataIndex: 'depreciationMethod',
     key: 'depreciationMethod',
+    width:150,
   },
   {
     title: 'Warranty Expiry',
     dataIndex: 'warrantyExpiry',
     key: 'warrantyExpiry',
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+    width:150,
+    render: (value) => {
+    // If value is valid, format it, otherwise return an empty string
+    return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+  },
   },
   {
     title: 'Maintenance Date',
     dataIndex: 'maintenanceDate',
     key: 'maintenanceDate',
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+    width:150,
+    render: (value) => {
+    // If value is valid, format it, otherwise return an empty string
+    return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+  },
   },
   {
     title: 'Maintenance Hour',
     dataIndex: 'maintenanceHour',
     key: 'maintenanceHour',
+    width:150,
   },
   {
     title: 'Insurance',
     dataIndex: 'insurance',
     key: 'insurance',
+    width:150,
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
+    width:150,
   },
   {
     title: 'Attachment',
     dataIndex: 'attachment',
     key: 'attachment',
+    width:150,
   },
   {
     title: 'Remark',
     dataIndex: 'remark',
     key: 'remark',
+    width:150,
   },
   {
     title: 'Action',
     key: 'action',
+    width:150,
+    fixed:'right',
     render: (_, record) => (
       <Space size="middle">
         <EditAssetModal assetObj={record} fetchAsset={fetchAsset} vendor={vendor} staff={staff}/>

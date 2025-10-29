@@ -34,6 +34,9 @@ const salesOrderSchema = new mongoose.Schema({
     paymentId:{
         type:mongoose.Schema.Types.ObjectId, ref:"Payment",
     },
+    date:{
+        type:Date,
+    },
     remark:{
         type: String,
     }

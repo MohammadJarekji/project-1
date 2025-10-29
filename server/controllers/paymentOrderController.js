@@ -30,11 +30,14 @@ async function generatePAYNumber() {
 
 exports.addPaymentOrder = async (req, res) =>{
     try{
-        const {vendorId, amount, currencyId, remark } = req.body;
+        const {vendorId, amount, currencyId, date, remark } = req.body;
 
             console.log("req: ",req.body)
         // Convert decimal quantity
-        const decimalAmount = mongoose.Types.Decimal128.fromString(amount.toString());
+        const decimalAmount =
+                            amount !== undefined && amount !== null && amount !== ''
+                            ? mongoose.Types.Decimal128.fromString(amount.toString())
+                            : null;
 
          const payNumber = await generatePAYNumber();
 
@@ -44,6 +47,7 @@ exports.addPaymentOrder = async (req, res) =>{
             vendorId,
             amount:decimalAmount,  
             currencyId,
+            date,
             remark 
         });
 
@@ -86,10 +90,13 @@ exports.getPaymentOrder = async (req, res)=>{
 exports.updatePaymentOrder = async (req, res)=>{
     try{
         const{ id } = req.params;
-        const {payNumber, vendorId, amount, currencyId, remark} = req.body;
+        const {payNumber, vendorId, amount, currencyId, date, remark} = req.body;
       
         // Convert decimal price
-        const decimalAmount = mongoose.Types.Decimal128.fromString(amount.toString());
+        const decimalAmount =
+                            amount !== undefined && amount !== null && amount !== ''
+                            ? mongoose.Types.Decimal128.fromString(amount.toString())
+                            : null;
 
         // update the paymentOrder
         const updatedPaymentOrder = await PaymentOrder.findByIdAndUpdate(id, {
@@ -97,6 +104,7 @@ exports.updatePaymentOrder = async (req, res)=>{
             vendorId,
             amount:decimalAmount,  
             currencyId,
+            date,
             remark 
         },{new:true});
 

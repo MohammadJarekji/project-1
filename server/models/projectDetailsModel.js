@@ -9,7 +9,6 @@ const staffSchema = new mongoose.Schema({
   },
   hours: {
     type: mongoose.Schema.Types.Decimal128,
-    required: true,
   },
 });
 

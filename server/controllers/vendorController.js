@@ -8,7 +8,10 @@ exports.addVendor = async (req, res) =>{
         const {name, address, contactName, contactPhoneNumber, paymentId, creditLimit, remark} = req.body;
 
         // Convert decimal credit limit
-        const decimalCreditLimit = mongoose.Types.Decimal128.fromString(creditLimit.toString());
+        const decimalCreditLimit =
+                            creditLimit !== undefined && creditLimit !== null && creditLimit !== ''
+                              ? mongoose.Types.Decimal128.fromString(creditLimit.toString())
+                              : null;
 
         // Create a new vendor
         const newVendor = new Vendor({
@@ -54,7 +57,10 @@ exports.updateVendor = async (req, res)=>{
         const {name, address, contactName, contactPhoneNumber, paymentId, creditLimit, remark} = req.body;
 
         // Convert decimal credit limit
-        const decimalCreditLimit = mongoose.Types.Decimal128.fromString(creditLimit.toString());
+        const decimalCreditLimit =
+                            creditLimit !== undefined && creditLimit !== null && creditLimit !== ''
+                              ? mongoose.Types.Decimal128.fromString(creditLimit.toString())
+                              : null;
 
         // update the vendor
         const updatedVendor = await Vendor.findByIdAndUpdate(id, {

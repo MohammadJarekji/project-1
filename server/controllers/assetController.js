@@ -10,7 +10,10 @@ exports.addAsset = async (req, res) =>{
             staffId, depreciationMethod, warrantyExpiry, maintenanceDate, maintenanceHour, insurance, status, attachment, remark} = req.body;
 
         // Convert decimal acquisition cost
-        const decimalAcquisitionCost = mongoose.Types.Decimal128.fromString(acquisitionCost.toString());
+        const decimalAcquisitionCost =
+                    acquisitionCost !== undefined && acquisitionCost !== null && acquisitionCost !== ''
+                      ? mongoose.Types.Decimal128.fromString(acquisitionCost.toString())
+                      : null;
 
         // Create a new asset
         const newAsset = new Asset({
@@ -66,7 +69,10 @@ exports.updateAsset = async (req, res)=>{
             staffId, depreciationMethod, warrantyExpiry, maintenanceDate, maintenanceHour, insurance, status, attachment, remark} = req.body;
 
         // Convert decimal acquisition cost
-        const decimalAcquisitionCost = mongoose.Types.Decimal128.fromString(acquisitionCost.toString());
+        const decimalAcquisitionCost =
+                    acquisitionCost !== undefined && acquisitionCost !== null && acquisitionCost !== ''
+                      ? mongoose.Types.Decimal128.fromString(acquisitionCost.toString())
+                      : null;
 
         // update the asset
         const updatedAsset = await Asset.findByIdAndUpdate(id, {            

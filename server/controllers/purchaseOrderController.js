@@ -29,7 +29,7 @@ async function generatePONumber() {
 
 exports.addPurchaseOrder = async (req, res) =>{
     try{
-        const {vendorId, productId, quantity, uomId, price, currencyId, paymentId, remark } = req.body;
+        const {vendorId, productId, quantity, uomId, price, currencyId, paymentId, remark, date } = req.body;
 
             console.log("req: ",req.body)
         // Convert decimal quantity
@@ -50,7 +50,8 @@ exports.addPurchaseOrder = async (req, res) =>{
             price:decimalPrice, 
             currencyId, 
             paymentId,
-            remark 
+            remark,
+            date, 
         });
 
         await newPurchaseOrder.save();
@@ -105,7 +106,7 @@ exports.getPurchaseOrder = async (req, res)=>{
 exports.updatePurchaseOrder = async (req, res)=>{
     try{
         const{ id } = req.params;
-        const {poNumber, vendorId, productId, quantity:newQuantityRaw, uomId, price, currencyId, paymentId, remark} = req.body;
+        const {poNumber, vendorId, productId, quantity:newQuantityRaw, uomId, price, currencyId, paymentId, remark, date} = req.body;
 
                 const newQuantity = Number(newQuantityRaw);
 
@@ -147,7 +148,8 @@ exports.updatePurchaseOrder = async (req, res)=>{
             price:decimalPrice, 
             currencyId, 
             paymentId,
-            remark 
+            remark,
+            date, 
         },{new:true});
 
         if(!updatedPurchaseOrder) {

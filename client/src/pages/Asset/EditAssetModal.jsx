@@ -20,8 +20,8 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
             location: assetObj.location,
             staffId: assetObj.staffId,
             depreciationMethod: assetObj.depreciationMethod,
-            warrantyExpiry: dayjs(assetObj.warrantyExpiry),
-            maintenanceDate: dayjs(assetObj.maintenanceDate),
+            warrantyExpiry: assetObj.warrantyExpiry ? dayjs(assetObj.warrantyExpiry) : null, 
+            maintenanceDate: assetObj.maintenanceDate ? dayjs(assetObj.maintenanceDate) : null, 
             maintenanceHour: assetObj.maintenanceHour,
             insurance: assetObj.insurance,
             status: assetObj.status,
@@ -82,7 +82,7 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/asset/${assetObj._id}`,{
+                         const res = await fetch(`http://localhost:3000/api/asset/${assetObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

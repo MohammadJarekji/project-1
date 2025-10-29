@@ -15,6 +15,18 @@ const EditPaymentOrderModal = ({paymentOrderObj, fetchPaymentOrder, vendor, curr
       const onSearch = value => {
       };
 
+      const [Date, setDate] = useState(null);
+              
+                        const handleDateChange = (date) => {
+                  if (date) {
+                    // Save formatted string like "10/8/2025"
+                    const formatted = date.format('M/D/YYYY');
+                    setDate(formatted);
+                  } else {
+                    setDate(null);
+                  }
+                };
+
   // When editing: populate form fields
   useEffect(() => {
     if (paymentOrderObj) {
@@ -22,6 +34,7 @@ const EditPaymentOrderModal = ({paymentOrderObj, fetchPaymentOrder, vendor, curr
         vendorId:paymentOrderObj.vendorId,
         amount:paymentOrderObj.amount,
         currencyId:paymentOrderObj.currencyId,
+        date:dayjs(paymentOrderObj.date),
         remark:paymentOrderObj.remark, 
       });
 
@@ -61,7 +74,7 @@ const EditPaymentOrderModal = ({paymentOrderObj, fetchPaymentOrder, vendor, curr
             };
             try{
                     //  const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/paymentOrder/${paymentOrderObj._id}`,{
-                      const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/paymentOrder/${paymentOrderObj._id}`,{
+                      const res = await fetch(`http://localhost:3000/api/paymentOrder/${paymentOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
@@ -152,7 +165,24 @@ const EditPaymentOrderModal = ({paymentOrderObj, fetchPaymentOrder, vendor, curr
                 </Form.Item>
                 </Col>
 
-                <Col span={12}>
+              <Col span={12}>
+                <Form.Item
+                  label="Date"
+                  name="date"
+                  >
+                  <DatePicker
+                  onChange={handleDateChange} 
+                  style={{width:'100%'}}
+                  format="M/D/YYYY"
+                  value={Date ? dayjs(Date, 'M/D/YYYY') : null}
+                  />
+                  </Form.Item>
+                </Col>
+                
+              </Row>
+
+              <Row>
+                <Col span={24}>
                 <Form.Item
                 label="Remark"
                 name="remark"

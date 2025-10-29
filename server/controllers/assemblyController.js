@@ -29,20 +29,26 @@ exports.addAssembly = async (req, res) =>{
     try{
         const {productId, startDate, endDate, laborHours, status, lines , assetId, hours} = req.body;
 
-            console.log("req: ",req.body)
-
         // Convert labor Hours
-        const decimalLaborHours = mongoose.Types.Decimal128.fromString(laborHours.toString());
+        const decimalLaborHours =
+                            laborHours !== undefined && laborHours !== null && laborHours !== ''
+                              ? mongoose.Types.Decimal128.fromString(laborHours.toString())
+                              : null;
 
         // Convert decimal quantity
-        const decimalHours= mongoose.Types.Decimal128.fromString(hours.toString());
+        const decimalHours =
+                            hours !== undefined && hours !== null && hours !== ''
+                              ? mongoose.Types.Decimal128.fromString(hours.toString())
+                              : null;
 
          const asNumber = await generateASNumber();
 
          // Convert each lines item's quantity
     const processedLines = lines.map(item => ({
       productId: item.productId,
-      quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString()),
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                                : null,
       uomId: item.uomId,
     }));
 
@@ -77,8 +83,8 @@ exports.getAssembly = async (req, res)=>{
     // If you want to convert Decimal128 fields back to numbers for client convenience:
     const formattedOrders = assemblyOrders.map(order => ({
       ...order,
-      laborHours: parseFloat(order.laborHours.toString()),
-      hours: parseFloat(order.hours.toString()),
+      laborHours: order.laborHours != null ? parseFloat(order.laborHours.toString()) : null,
+      hours: order.hours != null ? parseFloat(order.hours.toString()) : null,
       lines: order.lines.map(item => ({
         ...item,
         quantity: parseFloat(item.quantity.toString()),
@@ -110,14 +116,24 @@ exports.updateAssembly = async (req, res) => {
       lines
     } = req.body;
 
-    // Convert to Decimal128
-    const decimalLaborHours = mongoose.Types.Decimal128.fromString(laborHours.toString());
-    const decimalHours = mongoose.Types.Decimal128.fromString(hours.toString());
+    // Convert labor Hours
+        const decimalLaborHours =
+                            laborHours !== undefined && laborHours !== null && laborHours !== ''
+                              ? mongoose.Types.Decimal128.fromString(laborHours.toString())
+                              : null;
+
+        // Convert decimal quantity
+        const decimalHours =
+                            hours !== undefined && hours !== null && hours !== ''
+                              ? mongoose.Types.Decimal128.fromString(hours.toString())
+                              : null;
 
     // Convert each lines item's quantity
     const processedLines = lines.map(item => ({
       productId: item.productId,
-      quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString()),
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                                : null,
       uomId: item.uomId,
     }));
 

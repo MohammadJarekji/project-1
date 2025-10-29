@@ -10,7 +10,6 @@ const asproductSchema = new mongoose.Schema({
   },
   quantity: {
     type: mongoose.Schema.Types.Decimal128,
-    required: true,
   },
 });
 

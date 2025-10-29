@@ -47,13 +47,15 @@ const EditStaffModal = ({staffObj, fetchStaff}) => {
           form.setFieldsValue({
             name: staffObj.name,
             role: staffObj.role,
-            dob: dayjs(staffObj.dob),
+            dob: staffObj.dob ? dayjs(staffObj.dob) : null, 
             phoneNumber: staffObj.phoneNumber,
-            joinedDate: dayjs(staffObj.joinedDate),
-            hireDate: dayjs(staffObj.hireDate),
+            joinedDate: staffObj.joinedDate ? dayjs(staffObj.joinedDate) : null,
+            hireDate: staffObj.hireDate ? dayjs(staffObj.hireDate) : null,
           });
         }
       }, [staffObj]);
+
+      console.log("Date: ", JSON.stringify(dayjs(staffObj.dob)))
         
             const [isModalOpen, setIsModalOpen] = useState(false);
         
@@ -145,7 +147,8 @@ const EditStaffModal = ({staffObj, fetchStaff}) => {
                                               onChange={handleDOFChange} 
                                               style={{width:'100%'}}
                                               format="M/D/YYYY"
-                                              value={selectedDOF ? dayjs(selectedDOF, 'M/D/YYYY') : null}/>
+                                              value={selectedDOF? dayjs(selectedDOF, 'M/D/YYYY') : null}
+                                              />
                              </Form.Item>
              
                              <Form.Item
@@ -163,7 +166,7 @@ const EditStaffModal = ({staffObj, fetchStaff}) => {
                                               onChange={handleJoinedDateChange} 
                                               style={{width:'100%'}}
                                               format="M/D/YYYY"
-                                              value={selectedJoinedDate ? dayjs(selectedJoinedDate, 'M/D/YYYY') : null}
+                                              value={selectedJoinedDate && dayjs(selectedJoinedDate, 'M/D/YYYY').isValid() ? dayjs(selectedJoinedDate, 'M/D/YYYY') : null}
                                               />
                              </Form.Item>
              
@@ -175,7 +178,8 @@ const EditStaffModal = ({staffObj, fetchStaff}) => {
                                               onChange={handleHireDateChange} 
                                               style={{width:'100%'}}
                                               format="M/D/YYYY"
-                                              value={selectedHireDate ? dayjs(selectedHireDate, 'M/D/YYYY') : null}/>
+                                              value={selectedHireDate && dayjs(selectedHireDate, 'M/D/YYYY').isValid() ? dayjs(selectedHireDate, 'M/D/YYYY') : null}
+                                              />                                             
                              </Form.Item>
 
                 <Form.Item label={null}>

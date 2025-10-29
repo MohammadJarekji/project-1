@@ -17,6 +17,8 @@ const Production = () => {
 
     const [product, setProduct] = useState([]);
     const [productSelection, setProductSelection] = useState([]);
+
+    console.log('Product Selection data: ',productSelection)
     
         const [isModalOpen, setIsModalOpen] = useState(false);
     
@@ -44,7 +46,7 @@ const Production = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/production/add',{
+                     const res = await fetch('http://localhost:3000/api/production/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -77,10 +79,14 @@ const Production = () => {
              const result = await res.json();
              setData(result.production)
 
+            console.log("result: ",result)
+
             const productMapped = result.product.map( prod =>({
               value: prod._id,
               label: prod.name,
             }));
+
+            
 
              const assembledproductMapped = result.product
               .filter(prod => prod.assembled === true) // only assembled products
@@ -88,6 +94,8 @@ const Production = () => {
                 value: prod._id,
                 label: prod.name,
               }));
+
+              console.log("Assembled Product mapped: ",assembledproductMapped)
 
             setProduct(productMapped)
             setProductSelection(assembledproductMapped)

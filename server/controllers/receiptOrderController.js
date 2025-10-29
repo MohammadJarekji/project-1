@@ -26,11 +26,13 @@ async function generateRECNumber() {
 
 exports.addReceiptOrder = async (req, res) =>{
     try{
-        const {customerId, amount, currencyId, remark } = req.body;
+        const {customerId, amount, currencyId, date, remark } = req.body;
 
-            console.log("req: ",req.body)
         // Convert decimal quantity
-        const decimalAmount = mongoose.Types.Decimal128.fromString(amount.toString());
+        const decimalAmount =
+                            amount !== undefined && amount !== null && amount !== ''
+                              ? mongoose.Types.Decimal128.fromString(amount.toString())
+                              : null;
 
          const recNumber = await generateRECNumber();
 
@@ -40,6 +42,7 @@ exports.addReceiptOrder = async (req, res) =>{
             customerId,
             amount:decimalAmount,  
             currencyId,
+            date,
             remark 
         });
 
@@ -82,10 +85,13 @@ exports.getReceiptOrder = async (req, res)=>{
 exports.updateReceiptOrder = async (req, res)=>{
     try{
         const{ id } = req.params;
-        const {recNumber, customerId, amount, currencyId, remark } = req.body;
+        const {recNumber, customerId, amount, currencyId, date, remark } = req.body;
       
         // Convert decimal price
-        const decimalAmount = mongoose.Types.Decimal128.fromString(amount.toString());
+        const decimalAmount =
+                            amount !== undefined && amount !== null && amount !== ''
+                              ? mongoose.Types.Decimal128.fromString(amount.toString())
+                              : null;
 
         // update the receiptOrder
         const updatedReceiptOrder = await ReceiptOrder.findByIdAndUpdate(id, {
@@ -93,6 +99,7 @@ exports.updateReceiptOrder = async (req, res)=>{
             customerId,
             amount:decimalAmount,  
             currencyId,
+            date,
             remark 
         },{new:true});
 

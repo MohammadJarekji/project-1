@@ -10,15 +10,19 @@ exports.addProjectDetails = async (req, res) =>{
         const {projectId , staff , asset} = req.body;
 
          // Convert each staff item's hours
-    const processedStaff = staff.map(item => ({
+    const processedStaff = staff?.map(item => ({
       staffId: item.staffId,
-      hours: mongoose.Types.Decimal128.fromString(item.hours.toString()),
+      hours: item.hours !== undefined && item.hours !== null && item.hours !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.hours.toString())
+                                : null,
     }));
 
     // Convert each asset item's hours
-    const processedAsset = asset.map(item => ({
+    const processedAsset = asset?.map(item => ({
       assetId: item.assetId,
-      hours: mongoose.Types.Decimal128.fromString(item.hours.toString()),
+      hours: item.hours !== undefined && item.hours !== null && item.hours !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.hours.toString())
+                                : null,
     }));
 
         // Create a new projectDetailsOrder
@@ -49,11 +53,11 @@ exports.getProjectDetails = async (req, res)=>{
       ...order,
       staff: order.staff.map(item => ({
         ...item,
-        hours: parseFloat(item.hours.toString()),
+        hours: item.hours != null ? parseFloat(item.hours.toString()) : null,
       })),
        asset: order.asset.map(item => ({
         ...item,
-        hours: parseFloat(item.hours.toString()),
+        hours: item.hours != null ? parseFloat(item.hours.toString()) : null,
       })),
     }));
 
@@ -84,13 +88,17 @@ exports.updateProjectDetails = async (req, res) => {
     // Convert staff hours to Decimal128
     const processedStaff = staff.map(item => ({
       staffId: item.staffId,
-      hours: mongoose.Types.Decimal128.fromString(item.hours.toString()),
+      hours: item.hours !== undefined && item.hours !== null && item.hours !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.hours.toString())
+                                : null,
     }));
 
     // Convert asset hours to Decimal128
     const processedAsset = asset.map(item => ({
       assetId: item.assetId,
-      hours: mongoose.Types.Decimal128.fromString(item.hours.toString()),
+      hours: item.hours !== undefined && item.hours !== null && item.hours !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.hours.toString())
+                                : null,
     }));
 
     // Find document and update

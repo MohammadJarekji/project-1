@@ -9,15 +9,23 @@ exports.addDiesel = async (req, res) =>{
         const {productId , asset, uomId, machineCounter, averageCost} = req.body;
 
     // Convert machine counter
-    const decimalmachineCounter = mongoose.Types.Decimal128.fromString(machineCounter.toString());
+    const decimalmachineCounter =
+                        machineCounter !== undefined && machineCounter !== null && machineCounter !== ''
+                          ? mongoose.Types.Decimal128.fromString(machineCounter.toString())
+                          : null;
 
     // Convert average cost
-    const decimalaverageCost = mongoose.Types.Decimal128.fromString(averageCost.toString());
+    const decimalaverageCost =
+                        averageCost !== undefined && averageCost !== null && averageCost !== ''
+                          ? mongoose.Types.Decimal128.fromString(averageCost.toString())
+                          : null;
 
     // Convert each asset item's hours
     const processedAsset = asset.map(item => ({
       assetId: item.assetId,
-      quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString()),
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                                : null,
     }));
 
         // Create a new dieselOrder
@@ -48,6 +56,7 @@ exports.getDiesel = async (req, res)=>{
     const formattedOrders = dieselOrders.map(order => ({
       ...order,
        machineCounter: order.machineCounter ? parseFloat(order.machineCounter.toString()) : order.machineCounter,
+        // hours: item.hours != null ? parseFloat(item.hours.toString()) : null,
     averageCost: order.averageCost ? parseFloat(order.averageCost.toString()) : order.averageCost,
        asset: order.asset.map(item => ({
         ...item,
@@ -73,10 +82,16 @@ exports.updateDiesel = async (req, res) => {
      const {productId , asset, uomId, machineCounter, averageCost} = req.body;
 
      // Convert machine counter
-    const decimalmachineCounter = mongoose.Types.Decimal128.fromString(machineCounter.toString());
+    const decimalmachineCounter =
+                        machineCounter !== undefined && machineCounter !== null && machineCounter !== ''
+                          ? mongoose.Types.Decimal128.fromString(machineCounter.toString())
+                          : null;
 
     // Convert average cost
-    const decimalaverageCost = mongoose.Types.Decimal128.fromString(averageCost.toString());
+    const decimalaverageCost =
+                        averageCost !== undefined && averageCost !== null && averageCost !== ''
+                          ? mongoose.Types.Decimal128.fromString(averageCost.toString())
+                          : null;
 
     // Basic validation
     if (!id) {
@@ -86,7 +101,9 @@ exports.updateDiesel = async (req, res) => {
     // Convert asset hours to Decimal128
     const processedAsset = asset.map(item => ({
       assetId: item.assetId,
-      quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString()),
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                                ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                                : null,
       
     }));
 

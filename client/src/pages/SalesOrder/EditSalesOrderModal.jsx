@@ -15,6 +15,18 @@ const EditSalesOrderModal = ({salesOrderObj, fetchSalesOrder, uom, currency, cus
       const onSearch = value => {
       };
 
+      const [createdDate, setCreatedDate] = useState(null);
+              
+                        const handleCreatedDateChange = (date) => {
+                  if (date) {
+                    // Save formatted string like "10/8/2025"
+                    const formatted = date.format('M/D/YYYY');
+                    setCreatedDate(formatted);
+                  } else {
+                    setCreatedDate(null);
+                  }
+                };
+
       const handleDateChange = (date) => {
     if (date) {
       // Save formatted string like "10/8/2025"
@@ -36,6 +48,7 @@ const EditSalesOrderModal = ({salesOrderObj, fetchSalesOrder, uom, currency, cus
         price:salesOrderObj.price, 
         currencyId:salesOrderObj.currencyId,
         deliveryDate:dayjs(salesOrderObj.deliveryDate ),
+        date:dayjs(salesOrderObj.date ),
         paymentId:salesOrderObj.paymentId, 
         remark:salesOrderObj.remark, 
       });
@@ -100,7 +113,7 @@ const EditSalesOrderModal = ({salesOrderObj, fetchSalesOrder, uom, currency, cus
                 userId: userData._id
             };
             try{
-                     const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/salesOrder/${salesOrderObj._id}`,{
+                     const res = await fetch(`http://localhost:3000/api/salesOrder/${salesOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
@@ -273,13 +286,29 @@ const EditSalesOrderModal = ({salesOrderObj, fetchSalesOrder, uom, currency, cus
                            </Form.Item>
                              </Col>
                              </Row>
-           
-                           <Form.Item
-                           label="Remark"
-                           name="remark"
-                           >
-                           <Input placeholder="Please enter the remark"/>
-                           </Form.Item>
+                        <Row gutter={[9,9]}>
+                          <Col span={12}>
+                                <Form.Item
+                                  label="Date"
+                                  name="date"
+                                  >
+                                  <DatePicker
+                                  onChange={handleCreatedDateChange} 
+                                  style={{width:'100%'}}
+                                  format="M/D/YYYY"
+                                  value={createdDate ? dayjs(createdDate, 'M/D/YYYY') : null}
+                                  />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                  <Form.Item
+                              label="Remark"
+                              name="remark"
+                              >
+                              <Input placeholder="Please enter the remark"/>
+                              </Form.Item>
+                              </Col>
+                        </Row>                           
 
                 <Form.Item label={null}>
                 <Button style={{float:'right'}} type="primary" htmlType="submit">

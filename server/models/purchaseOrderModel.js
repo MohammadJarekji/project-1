@@ -32,6 +32,9 @@ const purchaseOrderSchema = new mongoose.Schema({
     },
     remark:{
         type: String,
+    },
+    date:{
+        type:Date,
     }
 
 },{

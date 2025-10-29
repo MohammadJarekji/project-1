@@ -45,7 +45,7 @@ const EditProjectDetailsModal = ({projectDetailsObj, fetchProjectDetails, staff,
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/projectDetails/${projectDetailsObj._id}`,{
+                         const res = await fetch(`http://localhost:3000/api/projectDetails/${projectDetailsObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',
@@ -163,7 +163,6 @@ const EditProjectDetailsModal = ({projectDetailsObj, fetchProjectDetails, staff,
                             <Form.Item
                               label="Asset"
                               name={[name, 'assetId']}
-                              rules={[{ required: true, message: 'Missing asset' }]}
                             >
                               <Select
                                 showSearch
@@ -180,7 +179,6 @@ const EditProjectDetailsModal = ({projectDetailsObj, fetchProjectDetails, staff,
                             <Form.Item
                               label="Hours"
                               name={[name, 'hours']}
-                              rules={[{ required: true, message: 'Missing hours' }]}
                             >
                               <InputNumber placeholder="hours" style={{ width: '100%' }} />
                             </Form.Item>

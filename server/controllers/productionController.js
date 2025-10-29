@@ -12,7 +12,9 @@ exports.addProduction = async (req, res) => {
     // Prepare processed products for saving in productionOrder
     const processedProduct = assembledProduct.map(item => ({
       productId: item.productId,  // FIXED: was 'staffId'
-      quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString()),
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                          ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                          : null,
     }));
 
     // Save production order
@@ -35,7 +37,10 @@ exports.addProduction = async (req, res) => {
       const addedQty = parseFloat(item.quantity);
       const updatedQty = currentQty + addedQty;
 
-      product.quantity = mongoose.Types.Decimal128.fromString(updatedQty.toString());
+      product.quantity = updatedQty !== undefined && updatedQty !== null && updatedQty !== ''
+                          ? mongoose.Types.Decimal128.fromString(updatedQty.toString())
+                          : null;
+
       await product.save();
     }
 
@@ -101,7 +106,10 @@ exports.updateProduction = async (req, res) => {
       if (product) {
         const oldQty = parseFloat(product.quantity.toString());
         const productionQty = parseFloat(item.quantity.toString());
-        product.quantity = mongoose.Types.Decimal128.fromString((oldQty - productionQty).toString());
+        product.quantity = 
+          oldQty !== undefined && oldQty !== null && oldQty !== '' && productionQty !== undefined && productionQty !== null && productionQty !== ''
+            ? mongoose.Types.Decimal128.fromString((oldQty - productionQty).toString())
+            : null;
         await product.save();
       }
     }
@@ -109,7 +117,9 @@ exports.updateProduction = async (req, res) => {
     // 3. Prepare the new assembledProduct array
     const processedProduct = assembledProduct.map(item => ({
       productId: item.productId,
-      quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString()),
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                          ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                          : null,
     }));
 
     // 4. Apply the new quantities to products
@@ -118,7 +128,9 @@ exports.updateProduction = async (req, res) => {
       if (product) {
         const oldQty = parseFloat(product.quantity.toString());
         const addedQty = parseFloat(item.quantity);
-        product.quantity = mongoose.Types.Decimal128.fromString((oldQty + addedQty).toString());
+        product.quantity = oldQty !== undefined && oldQty !== null && oldQty !== '' && productionQty !== undefined && productionQty !== null && productionQty !== ''
+            ? mongoose.Types.Decimal128.fromString((oldQty + productionQty).toString())
+            : null;
         await product.save();
       }
     }

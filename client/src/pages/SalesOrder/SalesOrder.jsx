@@ -187,7 +187,8 @@ const SalesOrder = () => {
             setFormData(values)
              const updatedData = {
                 ...values,
-                userId: userData._id
+                userId: userData._id,
+                date:dayjs().format('M/D/YYYY'),
             };
             try{
     
@@ -298,6 +299,8 @@ const SalesOrder = () => {
     title: 'Sales Order Number',
     dataIndex: 'soNumber',
     key: 'soNumber',
+    fixed: 'left',
+    width: 150,
     // ...getColumnSearchProps('name'),
     // render: text => <a>{text}</a>,
   },
@@ -305,6 +308,7 @@ const SalesOrder = () => {
     title: 'Customer',
     dataIndex: 'customer',
     key: 'customer',
+    width: 150,
     render: (text, record) => getCustomerLabel(record.customerId),
     // ...getColumnSearchProps('stock'),
   },
@@ -312,12 +316,14 @@ const SalesOrder = () => {
     title: 'Product',
     dataIndex: 'product',
     key: 'product',
+    width: 150,
     render: (text, record) => getProductLabel(record.productId),
   },
   {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
+    width: 150,
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
@@ -325,6 +331,7 @@ const SalesOrder = () => {
     title: 'UOM',
     dataIndex: 'uom',
     key: 'uom',
+    width: 150,
     ...getColumnSearchProps('uom', (record) => getUomLabel(record.uomId)),
     render: (text, record) => getUomLabel(record.uomId),
   },
@@ -332,6 +339,7 @@ const SalesOrder = () => {
     title: 'Price',
     dataIndex: 'price',
     key: 'price',
+    width: 150,
     ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
@@ -339,6 +347,7 @@ const SalesOrder = () => {
     title: 'Currency',
     dataIndex: 'currency',
     key: 'currency',
+    width: 150,
     ...getColumnSearchProps('currency', (record) => getCurrencyLabel(record.currencyId)),
     render: (text, record) => getCurrencyLabel(record.currencyId),
   },
@@ -346,27 +355,38 @@ const SalesOrder = () => {
     title:'delivery Date',
     dataIndex: 'deliveryDate',
     key: 'deliveryDate',
+    width: 150,
     render: (value) => dayjs(value).format('M/D/YYYY'),
   },
   {
     title: 'Payment',
     dataIndex: 'payment',
     key: 'payment',
+    width: 150,
     render: (text, record) => getPaymentLabel(record.paymentId),
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
-    {
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+    width: 150,
+    render: (value) => dayjs(value).format('M/D/YYYY'),
+  },
+  {
     title: 'Remark',
     dataIndex: 'remark',
     key: 'remark',
+    width: 150,
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
-
   {
     title: 'Action',
     key: 'action',
+    width: 150,
+    fixed: 'right',
     render: (_, record) => (
       <Space size="middle">
         <EditSalesOrderModal 

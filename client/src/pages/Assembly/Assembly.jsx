@@ -90,7 +90,7 @@ const Assembly = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/assembly/add',{
+                     const res = await fetch('http://localhost:3000/api/assembly/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -114,7 +114,7 @@ const Assembly = () => {
 
     const fetchAssembly = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/assembly',{
+            const res = await fetch('http://localhost:3000/api/assembly',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -200,14 +200,20 @@ const Assembly = () => {
     dataIndex: 'startDate',
     key: 'startDate',
     width: 150,
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+    render: (value) => {
+        // If value is valid, format it, otherwise return an empty string
+        return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+      },
   },
   {
     title: 'End Date',
     dataIndex: 'endDate',
     key: 'endDate',
     width: 150,
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+    render: (value) => {
+        // If value is valid, format it, otherwise return an empty string
+        return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+      },
   },
   {
     title: 'Labor Hours',

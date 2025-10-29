@@ -7,11 +7,17 @@ exports.addCustomer = async (req, res) =>{
     try{
         const {name, address, contactName, contactPhoneNumber, vatnum, creditLimit, paymentId, salesRegion, remark} = req.body;
 
-        // Convert decimal credit limit
-        const decimalCreditLimit = mongoose.Types.Decimal128.fromString(creditLimit.toString());
+       // Convert decimal credit limit
+        const decimalCreditLimit =
+                            creditLimit !== undefined && creditLimit !== null && creditLimit !== ''
+                              ? mongoose.Types.Decimal128.fromString(creditLimit.toString())
+                              : null;
 
         // Convert decimal VAT Number
-        const decimalVatNum = mongoose.Types.Decimal128.fromString(vatnum.toString());
+        const decimalVatNum =
+                            vatnum !== undefined && vatnum !== null && vatnum !== ''
+                              ? mongoose.Types.Decimal128.fromString(vatnum.toString())
+                              : null;
 
         // Create a new customer
         const newCustomer = new Customer({
@@ -61,10 +67,16 @@ exports.updateCustomer = async (req, res)=>{
         const {name, address, contactName, contactPhoneNumber, vatnum, creditLimit, paymentId, salesRegion, remark} = req.body;
 
         // Convert decimal credit limit
-        const decimalCreditLimit = mongoose.Types.Decimal128.fromString(creditLimit.toString());
+        const decimalCreditLimit =
+                            creditLimit !== undefined && creditLimit !== null && creditLimit !== ''
+                              ? mongoose.Types.Decimal128.fromString(creditLimit.toString())
+                              : null;
 
         // Convert decimal VAT Number
-        const decimalVatNum = mongoose.Types.Decimal128.fromString(vatnum.toString());
+        const decimalVatNum =
+                            vatnum !== undefined && vatnum !== null && vatnum !== ''
+                              ? mongoose.Types.Decimal128.fromString(vatnum.toString())
+                              : null;
 
         // update the customer
         const updatedCustomer = await Customer.findByIdAndUpdate(id, {

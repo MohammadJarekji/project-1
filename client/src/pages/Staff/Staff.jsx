@@ -66,7 +66,7 @@ const Staff = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/staff/add',{
+                     const res = await fetch('http://localhost:3000/api/staff/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -90,7 +90,7 @@ const Staff = () => {
 
     const fetchStaff = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/staff',{
+            const res = await fetch('http://localhost:3000/api/staff',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -123,7 +123,10 @@ const Staff = () => {
     title: 'Date Of Birth',
     dataIndex: 'dob',
     key: 'dob',
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+     render: (value) => {
+    // If value is valid, format it, otherwise return an empty string
+    return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+  },
   },
   {
     title: 'Phone Number',
@@ -134,13 +137,19 @@ const Staff = () => {
     title: 'Joined Date',
     dataIndex: 'joinedDate',
     key: 'joinedDate',
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+     render: (value) => {
+    // If value is valid, format it, otherwise return an empty string
+    return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+  },
   },
   {
     title: 'Hire Date',
     dataIndex: 'hireDate',
     key: 'hireDate',
-    render: (value) => dayjs(value).format('M/D/YYYY'),
+     render: (value) => {
+    // If value is valid, format it, otherwise return an empty string
+    return value && dayjs(value).isValid() ? dayjs(value).format('M/D/YYYY') : '';
+  },
   },
   {
     title: 'Action',
@@ -197,10 +206,11 @@ const Staff = () => {
                 name="dob"
                 >
                 <DatePicker 
-                                 onChange={handleDOFChange} 
-                                 style={{width:'100%'}}
-                                 format="M/D/YYYY"
-                                 value={selectedDOF ? dayjs(selectedDOF, 'M/D/YYYY') : null}/>
+                  onChange={handleDOFChange} 
+                  style={{width:'100%'}}
+                  format="M/D/YYYY"
+                  value={selectedDOF && dayjs(selectedDOF, 'M/D/YYYY').isValid() ? dayjs(selectedDOF, 'M/D/YYYY') : null}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -215,11 +225,11 @@ const Staff = () => {
                 name="joinedDate"
                 >
                 <DatePicker 
-                                 onChange={handleJoinedDateChange} 
-                                 style={{width:'100%'}}
-                                 format="M/D/YYYY"
-                                 value={selectedJoinedDate ? dayjs(selectedJoinedDate, 'M/D/YYYY') : null}
-                                 />
+                  onChange={handleJoinedDateChange} 
+                  style={{width:'100%'}}
+                  format="M/D/YYYY"
+                  value={selectedJoinedDate && dayjs(selectedJoinedDate, 'M/D/YYYY').isValid() ? dayjs(selectedJoinedDate, 'M/D/YYYY') : null}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -227,10 +237,11 @@ const Staff = () => {
                 name="hireDate"
                 >
                 <DatePicker 
-                                 onChange={handleHireDateChange} 
-                                 style={{width:'100%'}}
-                                 format="M/D/YYYY"
-                                 value={selectedHireDate ? dayjs(selectedHireDate, 'M/D/YYYY') : null}/>
+                  onChange={handleHireDateChange} 
+                  style={{width:'100%'}}
+                  format="M/D/YYYY"
+                  value={selectedHireDate && dayjs(selectedHireDate, 'M/D/YYYY').isValid() ? dayjs(selectedHireDate, 'M/D/YYYY') : null}
+                  />
                 </Form.Item>
 
                 <Form.Item label={null}>

@@ -159,12 +159,13 @@ const ReceiptOrder = () => {
             setFormData(values)
              const updatedData = {
                 ...values,
-                userId: userData._id
+                userId: userData._id,
+                date:dayjs().format('M/D/YYYY'),
             };
             try{
     
                     //  const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder/add',{
-                    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder/add',{
+                    const res = await fetch('http://localhost:3000/api/receiptOrder/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -260,7 +261,14 @@ const ReceiptOrder = () => {
     ...getColumnSearchProps('currency', (record) => getCurrencyLabel(record.currencyId)),
     render: (text, record) => getCurrencyLabel(record.currencyId),
   },
-    {
+  {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+       width: 150,
+      render: (value) => dayjs(value).format('M/D/YYYY'),
+  },
+  {
     title: 'Remark',
     dataIndex: 'remark',
     key: 'remark',

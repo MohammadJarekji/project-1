@@ -22,6 +22,7 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
         customerId:receiptOrderObj.customerId,
         amount:receiptOrderObj.amount,
         currencyId:receiptOrderObj.currencyId,
+        date:dayjs(receiptOrderObj.date), 
         remark:receiptOrderObj.remark, 
       });
 
@@ -29,6 +30,18 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
   }, [receiptOrderObj]);
     
         const [isModalOpen, setIsModalOpen] = useState(false);
+
+        const [Date, setDate] = useState(null);
+                
+                          const handleDateChange = (date) => {
+                    if (date) {
+                      // Save formatted string like "10/8/2025"
+                      const formatted = date.format('M/D/YYYY');
+                      setDate(formatted);
+                    } else {
+                      setDate(null);
+                    }
+                  };
 
               const [formData, setFormData] = useState({
               name:"",
@@ -74,7 +87,7 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
             };
             try{
                     //  const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/receiptOrder/${receiptOrderObj._id}`,{
-                      const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/receiptOrder/${receiptOrderObj._id}`,{
+                      const res = await fetch(`http://localhost:3000/api/receiptOrder/${receiptOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
@@ -164,8 +177,24 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
                    </Select>
                    </Form.Item>
                    </Col>
-   
+
                    <Col span={12}>
+                    <Form.Item
+                      label="Date"
+                      name="date"
+                      >
+                      <DatePicker
+                      onChange={handleDateChange} 
+                      style={{width:'100%'}}
+                      format="M/D/YYYY"
+                      value={Date ? dayjs(Date, 'M/D/YYYY') : null}
+                      />
+                      </Form.Item>
+                  </Col>                   
+                 </Row>
+
+                 <Row>
+                  <Col span={12}>
                    <Form.Item
                    label="Remark"
                    name="remark"

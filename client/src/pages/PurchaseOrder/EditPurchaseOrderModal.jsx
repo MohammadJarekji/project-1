@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Input, Select, Row, Col, InputNumber } from 'antd';
+import { Button, Modal, Form, Input, Select, Row, Col, InputNumber, DatePicker } from 'antd';
 import{useAuth} from '../../contexts/AuthContext';
 import {EditFilled} from '@ant-design/icons';
+import dayjs from 'dayjs';
 
 const EditPurchaseOrderModal = ({purchaseOrderObj, fetchPurchaseOrder, uom, currency, vendor, payment, product, productSelection}) => {
 
@@ -23,7 +24,8 @@ const EditPurchaseOrderModal = ({purchaseOrderObj, fetchPurchaseOrder, uom, curr
         uomId:purchaseOrderObj.uomId, 
         price:purchaseOrderObj.price, 
         currencyId:purchaseOrderObj.currencyId,
-        paymentId:purchaseOrderObj.paymentId, 
+        paymentId:purchaseOrderObj.paymentId,
+        date:dayjs(purchaseOrderObj.date), 
         remark:purchaseOrderObj.remark, 
       });
 
@@ -31,6 +33,19 @@ const EditPurchaseOrderModal = ({purchaseOrderObj, fetchPurchaseOrder, uom, curr
   }, [purchaseOrderObj]);
     
         const [isModalOpen, setIsModalOpen] = useState(false);
+
+        const [Date, setDate] = useState(null);
+        
+                  const handleDateChange = (date) => {
+            if (date) {
+              // Save formatted string like "10/8/2025"
+              const formatted = date.format('M/D/YYYY');
+              setDate(formatted);
+            } else {
+              setDate(null);
+            }
+          };
+
 
                     const handleSelectProductChange = (value) => {
               // Find selected PO object
@@ -75,7 +90,7 @@ const EditPurchaseOrderModal = ({purchaseOrderObj, fetchPurchaseOrder, uom, curr
                 userId: userData._id
             };
             try{
-                     const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/purchaseOrder/${purchaseOrderObj._id}`,{
+                     const res = await fetch(`http://localhost:3000/api/purchaseOrder/${purchaseOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
@@ -233,6 +248,23 @@ const EditPurchaseOrderModal = ({purchaseOrderObj, fetchPurchaseOrder, uom, curr
                            </Form.Item>
                              </Col>
                              <Col span={12}>
+                                <Form.Item
+                                  label="Date"
+                                  name="date"
+                                  >
+                                  <DatePicker
+                                  onChange={handleDateChange} 
+                                  style={{width:'100%'}}
+                                  format="M/D/YYYY"
+                                  value={Date ? dayjs(Date, 'M/D/YYYY') : null}
+                                  />
+                                  </Form.Item>
+                              </Col>
+                             
+                             </Row>
+
+                             <Row>
+                              <Col span={12}>
                            <Form.Item
                            label="Remark"
                            name="remark"

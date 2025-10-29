@@ -6,6 +6,7 @@ import{useAuth} from '../../contexts/AuthContext';
 import DeletePurchaseOrderModal from './DeletePurchaseOrderModal';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
+import dayjs from 'dayjs';
 
 const PurchaseOrder = () => {
 
@@ -161,7 +162,8 @@ const PurchaseOrder = () => {
             setFormData(values)
              const updatedData = {
                 ...values,
-                userId: userData._id
+                userId: userData._id,
+                date:dayjs().format('M/D/YYYY'),
             };
             try{
     
@@ -265,6 +267,8 @@ const PurchaseOrder = () => {
     title: 'Purchase Order Number',
     dataIndex: 'poNumber',
     key: 'poNumber',
+    fixed: 'left',
+    width: 150,
     // ...getColumnSearchProps('name'),
     // render: text => <a>{text}</a>,
   },
@@ -272,6 +276,7 @@ const PurchaseOrder = () => {
     title: 'Vendor',
     dataIndex: 'vendor',
     key: 'vendor',
+     width: 150,
     render: (text, record) => getVendorLabel(record.vendorId),
     // ...getColumnSearchProps('stock'),
   },
@@ -279,12 +284,14 @@ const PurchaseOrder = () => {
     title: 'Product',
     dataIndex: 'product',
     key: 'product',
+     width: 150,
     render: (text, record) => getProductLabel(record.productId),
   },
   {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
+     width: 150,
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
@@ -292,6 +299,7 @@ const PurchaseOrder = () => {
     title: 'UOM',
     dataIndex: 'uom',
     key: 'uom',
+     width: 150,
     ...getColumnSearchProps('uom', (record) => getUomLabel(record.uomId)),
     render: (text, record) => getUomLabel(record.uomId),
   },
@@ -299,6 +307,7 @@ const PurchaseOrder = () => {
     title: 'Price',
     dataIndex: 'price',
     key: 'price',
+     width: 150,
     ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
@@ -306,6 +315,7 @@ const PurchaseOrder = () => {
     title: 'Currency',
     dataIndex: 'currency',
     key: 'currency',
+     width: 150,
     ...getColumnSearchProps('currency', (record) => getCurrencyLabel(record.currencyId)),
     render: (text, record) => getCurrencyLabel(record.currencyId),
   },
@@ -313,14 +323,23 @@ const PurchaseOrder = () => {
     title: 'Payment',
     dataIndex: 'payment',
     key: 'payment',
+     width: 150,
     render: (text, record) => getPaymentLabel(record.paymentId),
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
-    {
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+     width: 150,
+    render: (value) => dayjs(value).format('M/D/YYYY'),
+  },
+  {
     title: 'Remark',
     dataIndex: 'remark',
     key: 'remark',
+     width: 150,
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
@@ -328,6 +347,8 @@ const PurchaseOrder = () => {
   {
     title: 'Action',
     key: 'action',
+    width: 150,
+    fixed: 'right',
     render: (_, record) => (
       <Space size="middle">
         <EditPurchaseOrderModal 
