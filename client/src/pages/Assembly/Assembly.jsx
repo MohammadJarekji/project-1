@@ -90,7 +90,7 @@ const Assembly = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/assembly/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/assembly/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -114,7 +114,7 @@ const Assembly = () => {
 
     const fetchAssembly = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/assembly',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/assembly',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
