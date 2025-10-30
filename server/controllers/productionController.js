@@ -170,7 +170,9 @@ exports.deleteProduction = async (req, res) => {
       const product = await Product.findById(item.productId);
       if (product) {
         const currentQty = parseFloat(product.quantity.toString());
-        const revertQty = parseFloat(item.quantity.toString());
+        const revertQty = item.quantity && !isNaN(item.quantity) 
+                          ? parseFloat(item.quantity.toString()) 
+                          : 0;
         const updatedQty = currentQty - revertQty;
 
         product.quantity = mongoose.Types.Decimal128.fromString(

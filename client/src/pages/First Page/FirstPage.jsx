@@ -138,7 +138,7 @@ const FirstPage = () => {
     useEffect(() => {
     const fetchTotalStock = async () => {
       try {
-        const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/dashboard/products/total-stock', {
+        const response = await fetch('http://localhost:3000/api/dashboard/products/total-stock', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

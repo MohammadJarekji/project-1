@@ -117,3 +117,23 @@ exports.deleteAsset = async (req, res)=>{
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 }
+
+exports.checkSerialNumber = async (req, res) => {
+  const { serialNumber } = req.params;
+
+  try {
+    // Check if the serial number already exists in the Asset collection
+    const existingAsset = await Asset.findOne({ serialNumber });
+
+    if (existingAsset) {
+      // Serial number found, return that it's taken
+      return res.json({ exists: true });
+    }
+
+    // Serial number not found, return that it's available
+    return res.json({ exists: false });
+  } catch (error) {
+    console.error("Error checking serial number:", error);
+    return res.status(500).json({ error: "Server error while checking serial number." });
+  }
+};

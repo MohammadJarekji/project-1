@@ -55,6 +55,8 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
 
             const [selectedWarrantyExpiry, setSelectedWarrantyExpiry] = useState(null);
             const [selectedMaintenanceDate, setSelectedMaintenanceDate] = useState(null);
+            const [serialNumber, setSerialNumber] = useState(''); // For storing the serial number value
+            const [serialNumberTaken, setSerialNumberTaken] = useState(false); // For error state
 
 
             const handleWarrantyExpiryChange = (date) => {
@@ -76,6 +78,25 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
                   setSelectedMaintenanceDate(null);
                 }
               };
+
+
+            // Function to check if the serial number is already taken
+  const checkSerialNumber = async (serialNumber) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/asset/check-serial/${serialNumber}`);
+      const result = await response.json();
+      
+      // Set the serial number error state based on the response
+      if (result.exists) {
+        setSerialNumberTaken(true);
+      } else {
+        setSerialNumberTaken(false);
+      }
+    } catch (error) {
+      console.error('Error checking serial number:', error);
+      setSerialNumberTaken(false); // Handle error by assuming serial number is available
+    }
+  };
         
             const handleSubmit = async (values)=>{
                 // e.preventDefault();
@@ -128,12 +149,35 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
             >
                  <Row gutter={[9,9]}>
                              <Col span={12}>
-                               <Form.Item
-                               label="Serial Number"
-                               name="serialNumber"
-                               >
-                               <Input placeholder='Enter the serial number'/>
-                               </Form.Item>
+                                <Form.Item
+                                     name="serialNumber"
+                                     label="Serial Number"
+                                     rules={[
+                                       { message: 'Please input a serial number!' },
+                                       {
+                                         validator: (_, value) => {
+                                           if (serialNumberTaken) {
+                                             return Promise.reject(new Error('This serial number is taken. Please enter another one.'));
+                                           }
+                                           return Promise.resolve();
+                                         },
+                                       },
+                                     ]}
+                                   >
+                                     <Input
+                                       placeholder="Enter serial number"
+                                       value={serialNumber}
+                                       onChange={(e) => {
+                                         const newSerialNumber = e.target.value;
+                                         setSerialNumber(newSerialNumber); // Update the serial number value
+                                         setSerialNumberTaken(false); // Reset error state on input change
+
+                                         if (newSerialNumber) {
+                                            checkSerialNumber(newSerialNumber); // Trigger check when typing
+                                          }
+                                       }}                             
+                                     />
+                                   </Form.Item>
                                </Col>
              
                                <Col span={12}>
