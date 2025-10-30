@@ -66,7 +66,7 @@ const Asset = () => {
    // Function to check if the serial number is already taken
   const checkSerialNumber = async (serialNumber) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/asset/check-serial/${serialNumber}`);
+      const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/asset/check-serial/${serialNumber}`);
       const result = await response.json();
       
       // Set the serial number error state based on the response
@@ -86,7 +86,7 @@ const Asset = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/asset/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/asset/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -110,7 +110,7 @@ const Asset = () => {
 
     const fetchAsset = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/asset',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/asset',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

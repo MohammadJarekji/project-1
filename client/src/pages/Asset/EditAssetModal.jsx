@@ -83,7 +83,7 @@ const EditAssetModal = ({assetObj, fetchAsset, vendor, staff}) => {
             // Function to check if the serial number is already taken
   const checkSerialNumber = async (serialNumber) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/asset/check-serial/${serialNumber}`);
+      const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/asset/check-serial/${serialNumber}`);
       const result = await response.json();
       
       // Set the serial number error state based on the response
