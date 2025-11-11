@@ -6,6 +6,8 @@ import{useAuth} from '../../contexts/AuthContext';
 import DeleteProductModal from './DeleteProductModal';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const Products = () => {
 
@@ -174,9 +176,42 @@ const Products = () => {
         const onFinishFailed = errorInfo => {
         };
 
+        const exportToExcel = () => {
+          // Map data to human-readable form
+          const formattedData = data.map(item => ({
+            'Product Name': item.name,
+            'Description': item.description || '',
+            'Quantity': item.quantity || '',
+            'UOM': getUomLabel(item.uomId),
+            'Price': item.price,
+            'Currency': getCurrencyLabel(item.currencyId),
+            'Category': getCategoryLabel(item.categoryId) || '',
+            'Warehouse': getWarehouseLabel(item.warehouseId) || '',
+            'MinStock': item.minStkLevel || '',
+            'MaxStock': item.maxStkLevel || '',
+            'Reorder Point': item.reorderPoint || '',
+            'Vendor': getVendorLabel(item.vendorId) || '',
+            'Blocked': item.blocked || '',            
+            'Assembled': item.assembled || '',
+            'Remark': item.remark || '',
+          }));
+        
+          // 1️⃣ Convert formatted data to worksheet
+          const ws = XLSX.utils.json_to_sheet(formattedData);
+        
+          // 2️⃣ Create a workbook and append the sheet
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'PurchaseOrders');
+        
+          // 3️⃣ Write file and trigger download
+          const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+          const blob = new Blob([wbout], { type: 'application/octet-stream' });
+          saveAs(blob, 'Products.xlsx');
+        };
+
     const fetchProducts = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/product',{
+            const res = await fetch('http://localhost:3000/api/product',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -266,6 +301,7 @@ const Products = () => {
     dataIndex: 'quantity',
     key: 'quantity',
     width: 150,
+    ...getColumnSearchProps('quantity'),
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
@@ -335,6 +371,7 @@ const Products = () => {
     dataIndex: 'vendor',
     key: 'vendor',
     width: 150,
+    ...getColumnSearchProps('vendor', (record) => getVendorLabel(record.vendorId)),
     render: (text, record) => getVendorLabel(record.vendorId),
     // ...getColumnSearchProps('stock'),
   },
@@ -381,9 +418,14 @@ const Products = () => {
 
     return (
         <>
+      <Space>
       <Button type="primary" onClick={showModal}>
         Add Product
       </Button>
+      <Button type="primary" onClick={exportToExcel} style={{background:'green'}}>
+                    Export to Excel
+      </Button>
+      </Space>
       <Modal
         title="Add Product"
         closable={{ 'aria-label': 'Custom Close Button' }}

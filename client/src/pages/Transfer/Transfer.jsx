@@ -187,7 +187,7 @@ const Transfer = () => {
             };
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/transfer/add',{
+                     const res = await fetch('http://localhost:3000/api/transfer/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -211,7 +211,7 @@ const Transfer = () => {
 
     const fetchTransfer = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/transfer',{
+            const res = await fetch('http://localhost:3000/api/transfer',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -276,14 +276,15 @@ const Transfer = () => {
     title: 'Product',
     dataIndex: 'product',
     key: 'product',
+    ...getColumnSearchProps('product', (record) => getProductLabel(record.productId)),
     render: (text, record) => getProductLabel(record.productId),
-    // ...getColumnSearchProps('name'),
     // render: text => <a>{text}</a>,
   },
   {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
+    ...getColumnSearchProps('quantity'),
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },

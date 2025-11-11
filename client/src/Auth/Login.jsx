@@ -2,6 +2,7 @@ import React from 'react'
 import {Card, Flex, message, Typography, Form, Input, Button, Alert, Spin} from 'antd'
 import { Link } from 'react-router-dom';
 import useLogin from '../hooks/useLogin';
+import './Login.css'; // We'll define styling next
 
 const Login = () => {
     const {error, loading, loginUser}=useLogin();
@@ -10,8 +11,9 @@ const Login = () => {
     }
 
     return (
-        <Card className='form-container'>
-            <Flex>
+          <div className="login-page">
+        <Card className='login-card'>
+            {/* <Flex> */}
             {/* form */}
             <Flex vertical flex={1}>
         <Typography.Title level={3} strong className='title'>
@@ -20,7 +22,8 @@ const Login = () => {
         <Typography.Title level={3} strong className='slogan'>
            Unlock you world.
         </Typography.Title>
-        <Form 
+        <Form
+            className='login-form'
             layout='vertical' 
             onFinish={handleLogin} 
             autoComplete="off">
@@ -69,7 +72,8 @@ const Login = () => {
                 type={`${loading ?'loading':'primary'}`}
                 htmlType='submit'
                 size='large'
-                className='btn'
+                 block
+                // className='btn'
                 >
                     {loading ? <Spin/> : '  Sign In '}
                 
@@ -77,19 +81,23 @@ const Login = () => {
             </Form.Item>
 
             <Form.Item>
+                <Typography.Text type="secondary" className="signup-text">
+              Don’t have an account?{' '}
                 <Link to="/registrarion">
-                <Button size='large' className='btn' disabled>
+                <Button size='large'  className="signup-link"  type="link" disabled>
                     Create an account
                 </Button>
                 </Link>
+                </Typography.Text>
             </Form.Item>
 
 
         </Form>
             </Flex>
 
-        </Flex>
+        {/* </Flex> */}
         </Card>
+        </div>
     )
 }
 

@@ -7,6 +7,8 @@ import DeleteSalesOrderModal from './DeleteSalesOrderModal';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import dayjs from 'dayjs';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const SalesOrder = () => {
 
@@ -214,9 +216,38 @@ const SalesOrder = () => {
         const onFinishFailed = errorInfo => {
         };
 
+      const exportToExcel = () => {
+        // Map data to human-readable form
+        const formattedData = data.map(item => ({
+          'Sales Order Number': item.soNumber,
+          'Customer': getCustomerLabel(item.customerId),
+          'Product': getProductLabel(item.productId),
+          'Quantity': item.quantity,
+          'UOM': getUomLabel(item.uomId) || '',
+          'Price': item.price,
+          'Currency': getCurrencyLabel(item.currencyId) || '',
+          'delivery Date': dayjs(item.deliveryDate).format('M/D/YYYY') || '',
+          'Payment': getPaymentLabel(item.paymentId) || '',
+          'Date': dayjs(item.date).format('M/D/YYYY') || '',
+          'Remark': item.remark || '',
+        }));
+      
+        // 1️⃣ Convert formatted data to worksheet
+        const ws = XLSX.utils.json_to_sheet(formattedData);
+      
+        // 2️⃣ Create a workbook and append the sheet
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'PurchaseOrders');
+      
+        // 3️⃣ Write file and trigger download
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], { type: 'application/octet-stream' });
+        saveAs(blob, 'SalesOrders.xlsx');
+      };
+
     const fetchSalesOrder = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/salesOrder',{
+            const res = await fetch('http://localhost:3000/api/salesOrder',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -301,14 +332,15 @@ const SalesOrder = () => {
     key: 'soNumber',
     fixed: 'left',
     width: 150,
-    // ...getColumnSearchProps('name'),
-    // render: text => <a>{text}</a>,
+    ...getColumnSearchProps('soNumber'),
+    render: text => <a>{text}</a>,
   },
     {
     title: 'Customer',
     dataIndex: 'customer',
     key: 'customer',
     width: 150,
+    ...getColumnSearchProps('customer', (record) => getCustomerLabel(record.customerId)),
     render: (text, record) => getCustomerLabel(record.customerId),
     // ...getColumnSearchProps('stock'),
   },
@@ -317,6 +349,7 @@ const SalesOrder = () => {
     dataIndex: 'product',
     key: 'product',
     width: 150,
+    ...getColumnSearchProps('product', (record) => getProductLabel(record.productId)),
     render: (text, record) => getProductLabel(record.productId),
   },
   {
@@ -324,7 +357,7 @@ const SalesOrder = () => {
     dataIndex: 'quantity',
     key: 'quantity',
     width: 150,
-    // ...getColumnSearchProps('price'),
+    ...getColumnSearchProps('quantity'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
   {
@@ -356,6 +389,7 @@ const SalesOrder = () => {
     dataIndex: 'deliveryDate',
     key: 'deliveryDate',
     width: 150,
+    ...getColumnSearchProps('deliveryDate', (record) => dayjs(record.deliveryDate).format('M/D/YYYY')),
     render: (value) => dayjs(value).format('M/D/YYYY'),
   },
   {
@@ -372,6 +406,7 @@ const SalesOrder = () => {
     dataIndex: 'date',
     key: 'date',
     width: 150,
+    ...getColumnSearchProps('date', (record) => dayjs(record.date).format('M/D/YYYY')),
     render: (value) => dayjs(value).format('M/D/YYYY'),
   },
   {
@@ -402,9 +437,14 @@ const SalesOrder = () => {
 
     return (
         <>
+      <Space>
       <Button type="primary" onClick={showModal}>
         Add SalesOrder
       </Button>
+      <Button type="primary" onClick={exportToExcel} style={{background:'green'}}>
+        Export to Excel
+      </Button>
+      </Space>
       <Modal
         title="Add SalesOrder"
         closable={{ 'aria-label': 'Custom Close Button' }}

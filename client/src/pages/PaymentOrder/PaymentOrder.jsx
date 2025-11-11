@@ -7,6 +7,8 @@ import DeletePaymentOrderModal from './DeletePaymentOrderModal';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import dayjs from 'dayjs';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const PaymentOrder = () => {
 
@@ -132,7 +134,32 @@ console.log("Data: ",data)
 
           const [currency, setcurrency] = useState([]);
           const [vendor, setVendor] = useState([]);
-        
+
+
+          const exportToExcel = () => {
+                  // Map data to human-readable form
+                  const formattedData = data.map(item => ({
+                    'Payment Order Number': item.payNumber,
+                    'Vendor': getVendorLabel(item.vendorId),
+                    'Amount': item.amount || '',
+                    'Currency': getCurrencyLabel(item.currencyId) || '',
+                    'Date': dayjs(item.date).format('M/D/YYYY') || '',
+                    'Remark': item.remark || '',
+                  }));
+                
+                  // 1️⃣ Convert formatted data to worksheet
+                  const ws = XLSX.utils.json_to_sheet(formattedData);
+                
+                  // 2️⃣ Create a workbook and append the sheet
+                  const wb = XLSX.utils.book_new();
+                  XLSX.utils.book_append_sheet(wb, ws, 'PurchaseOrders');
+                
+                  // 3️⃣ Write file and trigger download
+                  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                  const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                  saveAs(blob, 'PaymentOrders.xlsx');
+                };
+
       const showModal = () => {
         setIsModalOpen(true);
       };
@@ -154,7 +181,7 @@ console.log("Data: ",data)
             try{
     
                     //  const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder/add',{
-                    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder/add',{
+                    const res = await fetch('http://localhost:3000/api/paymentOrder/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -179,7 +206,7 @@ console.log("Data: ",data)
     const fetchPaymentOrder = async ()=>{
         try{
             // const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder',{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder',{
+            const res = await fetch('http://localhost:3000/api/paymentOrder',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -227,13 +254,14 @@ console.log("Data: ",data)
       title: 'Payment Order Number',
       dataIndex: 'payNumber',
       key: 'payNumber',
-      // ...getColumnSearchProps('name'),
-      // render: text => <a>{text}</a>,
+      ...getColumnSearchProps('payNumber'),
+      render: text => <a>{text}</a>,
     },
     {
     title: 'Vendor',
     dataIndex: 'vendor',
     key: 'vendor',
+    ...getColumnSearchProps('vendor', (record) => getVendorLabel(record.vendorId)),
     render: (text, record) => getVendorLabel(record.vendorId),
     // ...getColumnSearchProps('stock'),
   },
@@ -241,7 +269,7 @@ console.log("Data: ",data)
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
-    // ...getColumnSearchProps('price'),
+    ...getColumnSearchProps('amount'),
     // render: (record) => <a>{record.payment.toString()}</a>,
   },
   {
@@ -255,6 +283,7 @@ console.log("Data: ",data)
     title: 'Date',
     dataIndex: 'date',
     key: 'date',
+    ...getColumnSearchProps('date', (record) => dayjs(record.date).format('M/D/YYYY')),
     render: (value) => dayjs(value).format('M/D/YYYY'),
   },
     {
@@ -281,9 +310,15 @@ console.log("Data: ",data)
 
     return (
         <>
+      <Space>
       <Button type="primary" onClick={showModal}>
         Add PaymentOrder
       </Button>
+      <Button type="primary" onClick={exportToExcel} style={{background:'green'}}>
+        Export to Excel
+      </Button>
+      </Space>
+
       <Modal
         title="Add PaymentOrder"
         closable={{ 'aria-label': 'Custom Close Button' }}

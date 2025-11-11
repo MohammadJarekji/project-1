@@ -173,7 +173,7 @@ const Inventory = () => {
                 userId: userData._id
             };
             try{
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/inventory/add',{
+                     const res = await fetch('http://localhost:3000/api/inventory/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -197,7 +197,7 @@ const Inventory = () => {
 
     const fetchInventory = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/inventory',{
+            const res = await fetch('http://localhost:3000/api/inventory',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -257,23 +257,20 @@ const Inventory = () => {
     title: 'Product',
     dataIndex: 'product',
     key: 'product',
+    ...getColumnSearchProps('product', (record) => getProductLabel(record.productId)),
     render: (text, record) => getProductLabel(record.productId),
-    // ...getColumnSearchProps('name'),
-    // render: text => <a>{text}</a>,
   },
     {
     title: 'Adjustment Type',
     dataIndex: 'adjustmentType',
     key: 'adjustmentType',
-    // render: (text, record) => getCustomerLabel(record.customerId),
-    // ...getColumnSearchProps('stock'),
+    ...getColumnSearchProps('adjustmentType'),
   },
   {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
-    // ...getColumnSearchProps('price'),
-    // render: (record) => <a>{record.payment.toString()}</a>,
+     ...getColumnSearchProps('quantity'),
   },
   {
     title: 'UOM',

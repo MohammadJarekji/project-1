@@ -7,6 +7,8 @@ import DeleteReceiptOrderModal from './DeleteReceiptOrderModal';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import dayjs from 'dayjs';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const ReceiptOrder = () => {
 
@@ -165,7 +167,7 @@ const ReceiptOrder = () => {
             try{
     
                     //  const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder/add',{
-                    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder/add',{
+                    const res = await fetch('http://localhost:3000/api/receiptOrder/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -187,10 +189,34 @@ const ReceiptOrder = () => {
         const onFinishFailed = errorInfo => {
         };
 
+        const exportToExcel = () => {
+                // Map data to human-readable form
+                const formattedData = data.map(item => ({
+                  'Receipt Order Number': item.recNumber,
+                  'Customer': getCustomerLabel(item.customerId),
+                  'Amount': item.amount|| '',
+                  'Currency': getCurrencyLabel(item.currencyId)|| '',
+                  'Date': dayjs(item.date).format('M/D/YYYY')|| '',
+                  'Remark': item.remark || '',
+                }));
+              
+                // 1️⃣ Convert formatted data to worksheet
+                const ws = XLSX.utils.json_to_sheet(formattedData);
+              
+                // 2️⃣ Create a workbook and append the sheet
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'PurchaseOrders');
+              
+                // 3️⃣ Write file and trigger download
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                saveAs(blob, 'ReceiptOrders.xlsx');
+              };
+
     const fetchReceiptOrder = async ()=>{
         try{
             // const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder',{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder',{
+            const res = await fetch('http://localhost:3000/api/receiptOrder',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -237,13 +263,14 @@ const ReceiptOrder = () => {
       title: 'Receipt Order Number',
       dataIndex: 'recNumber',
       key: 'recNumber',
-      // ...getColumnSearchProps('name'),
-      // render: text => <a>{text}</a>,
+      ...getColumnSearchProps('recNumber'),
+      render: text => <a>{text}</a>,
     },
     {
     title: 'Customer',
     dataIndex: 'customer',
     key: 'customer',
+    ...getColumnSearchProps('customer', (record) => getCustomerLabel(record.customerId)),
     render: (text, record) => getCustomerLabel(record.customerId),
     // ...getColumnSearchProps('stock'),
   },
@@ -251,6 +278,7 @@ const ReceiptOrder = () => {
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
+    ...getColumnSearchProps('amount'),
     // ...getColumnSearchProps('price'),
     // render: (record) => <a>{record.receipt.toString()}</a>,
   },
@@ -266,6 +294,7 @@ const ReceiptOrder = () => {
       dataIndex: 'date',
       key: 'date',
        width: 150,
+       ...getColumnSearchProps('date', (record) => dayjs(record.date).format('M/D/YYYY')),
       render: (value) => dayjs(value).format('M/D/YYYY'),
   },
   {
@@ -293,9 +322,14 @@ const ReceiptOrder = () => {
 
     return (
         <>
+      <Space>
       <Button type="primary" onClick={showModal}>
         Add ReceiptOrder
       </Button>
+      <Button type="primary" onClick={exportToExcel} style={{background:'green'}}>
+        Export to Excel
+      </Button>
+      </Space>
       <Modal
         title="Add ReceiptOrder"
         closable={{ 'aria-label': 'Custom Close Button' }}

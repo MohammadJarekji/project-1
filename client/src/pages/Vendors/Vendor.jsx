@@ -1,9 +1,12 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useRef} from 'react';
 import axios from 'axios'
 import { Space, Table, Tag, Button, Modal, Form, Input, Select } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import{useAuth} from '../../contexts/AuthContext';
 import EditVendorModal from './EditVendorModal';
 import DeleteVendorModal from './DeleteVendorModal';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 
 const Vendor = () => {
@@ -13,6 +16,97 @@ const Vendor = () => {
     const [data, setData] = useState([]);
      const [payment, setPayment] = useState([]); 
         const { userData}=useAuth();
+
+            // /////////////////////////////////////////////////////////////////
+
+      const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef(null);
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex, getSearchText, searchText, searchedColumn) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button type="link" size="small" onClick={close}>
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+    ),
+    onFilter: (value, record) => {
+      const fieldValue = getSearchText ? getSearchText(record) : record[dataIndex];
+      return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
+    },
+    filterDropdownProps: {
+      onOpenChange(open) {
+        if (open) {
+          setTimeout(() => searchInput.current?.select(), 100);
+        }
+      },
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText || '']}
+          autoEscape
+          textToHighlight={String(text ?? '')}
+        />
+      ) : (
+        String(text ?? '')
+      ),
+  });
+
+    // ////////////////////////////////////////////////////////////////
    
         const [isModalOpen, setIsModalOpen] = useState(false);
     
@@ -30,6 +124,32 @@ const Vendor = () => {
         };
         const onSearch = value => {
         };
+ 
+  const exportToExcel = () => {
+    // Map data to human-readable form
+    const formattedData = data.map(item => ({
+      'Vendor Name': item.name,
+      'Address': item.address || '',
+      'Contact Name': item.contactName,
+      'Contact Phone Number': item.contactPhoneNumber,
+      'Payment': getPaymentLabel(item.paymentId) || '',
+      'Credit limit': item.creditLimit || '',
+      'Remark': item.remark || '',
+    }));
+  
+    // 1️⃣ Convert formatted data to worksheet
+    const ws = XLSX.utils.json_to_sheet(formattedData);
+  
+    // 2️⃣ Create a workbook and append the sheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'PurchaseOrders');
+  
+    // 3️⃣ Write file and trigger download
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    saveAs(blob, 'Vendors.xlsx');
+  };
+
     
       const showModal = () => {
         setIsModalOpen(true);
@@ -67,7 +187,7 @@ const Vendor = () => {
 
     const fetchVendor = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/vendor',{
+            const res = await fetch('http://localhost:3000/api/vendor',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -100,22 +220,26 @@ const Vendor = () => {
     title: 'Vendor Name',
     dataIndex: 'name',
     key: 'name',
+    ...getColumnSearchProps('name'),
     render: text => <a>{text}</a>,
   },
   {
     title: 'Address',
     dataIndex: 'address',
     key: 'address',
+    ...getColumnSearchProps('address'),
   },
   {
     title: 'Contact Name',
     dataIndex: 'contactName',
     key: 'contactName',
+    ...getColumnSearchProps('contactName'),
   },
     {
     title: 'Contact Phone Number',
     dataIndex: 'contactPhoneNumber',
     key: 'contactPhoneNumber',
+    ...getColumnSearchProps('contactPhoneNumber'),
   },
   {
     title: 'Payment',
@@ -147,9 +271,16 @@ const Vendor = () => {
 
     return (
  <>
+    <Space>
       <Button type="primary" onClick={showModal}>
         Add Vendor
       </Button>
+
+       <Button type="primary" onClick={exportToExcel} style={{background:'green'}}>
+        Export to Excel
+      </Button>
+      </Space>
+
       <Modal
         title="Add Vendor"
         closable={{ 'aria-label': 'Custom Close Button' }}

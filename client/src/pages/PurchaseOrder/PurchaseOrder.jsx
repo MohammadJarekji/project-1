@@ -7,6 +7,8 @@ import DeletePurchaseOrderModal from './DeletePurchaseOrderModal';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import dayjs from 'dayjs';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const PurchaseOrder = () => {
 
@@ -189,9 +191,37 @@ const PurchaseOrder = () => {
         const onFinishFailed = errorInfo => {
         };
 
+       const exportToExcel = () => {
+  // Map data to human-readable form
+  const formattedData = data.map(item => ({
+    'Purchase Order Number': item.poNumber,
+    'Vendor': getVendorLabel(item.vendorId),
+    'Product': getProductLabel(item.productId),
+    'Quantity': item.quantity,
+    'UOM': getUomLabel(item.uomId) || '',
+    'Price': item.price,
+    'Currency': getCurrencyLabel(item.currencyId) || '',
+    'Payment': getPaymentLabel(item.paymentId) || '',
+    'Date': dayjs(item.date).format('M/D/YYYY') || '',
+    'Remark': item.remark || '',
+  }));
+
+  // 1️⃣ Convert formatted data to worksheet
+  const ws = XLSX.utils.json_to_sheet(formattedData);
+
+  // 2️⃣ Create a workbook and append the sheet
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'PurchaseOrders');
+
+  // 3️⃣ Write file and trigger download
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([wbout], { type: 'application/octet-stream' });
+  saveAs(blob, 'PurchaseOrders.xlsx');
+};
+
     const fetchPurchaseOrder = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/purchaseOrder',{
+            const res = await fetch('http://localhost:3000/api/purchaseOrder',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -269,14 +299,15 @@ const PurchaseOrder = () => {
     key: 'poNumber',
     fixed: 'left',
     width: 150,
-    // ...getColumnSearchProps('name'),
-    // render: text => <a>{text}</a>,
+    ...getColumnSearchProps('poNumber'),
+    render: text => <a>{text}</a>,
   },
     {
     title: 'Vendor',
     dataIndex: 'vendor',
     key: 'vendor',
      width: 150,
+     ...getColumnSearchProps('vendor', (record) => getVendorLabel(record.vendorId)),
     render: (text, record) => getVendorLabel(record.vendorId),
     // ...getColumnSearchProps('stock'),
   },
@@ -285,6 +316,7 @@ const PurchaseOrder = () => {
     dataIndex: 'product',
     key: 'product',
      width: 150,
+     ...getColumnSearchProps('product', (record) => getProductLabel(record.productId)),
     render: (text, record) => getProductLabel(record.productId),
   },
   {
@@ -333,6 +365,7 @@ const PurchaseOrder = () => {
     dataIndex: 'date',
     key: 'date',
      width: 150,
+     ...getColumnSearchProps('date', (record) => dayjs(record.date).format('M/D/YYYY')),
     render: (value) => dayjs(value).format('M/D/YYYY'),
   },
   {
@@ -363,9 +396,15 @@ const PurchaseOrder = () => {
 
     return (
         <>
+      <Space>
       <Button type="primary" onClick={showModal}>
         Add PurchaseOrder
       </Button>
+      <Button type="primary" onClick={exportToExcel} style={{background:'green'}}>
+              Export to Excel
+      </Button>
+      </Space>
+
       <Modal
         title="Add PurchaseOrder"
         closable={{ 'aria-label': 'Custom Close Button' }}

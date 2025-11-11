@@ -74,7 +74,7 @@ const EditPaymentOrderModal = ({paymentOrderObj, fetchPaymentOrder, vendor, curr
             };
             try{
                     //  const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/paymentOrder/${paymentOrderObj._id}`,{
-                      const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/paymentOrder/${paymentOrderObj._id}`,{
+                      const res = await fetch(`http://localhost:3000/api/paymentOrder/${paymentOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',

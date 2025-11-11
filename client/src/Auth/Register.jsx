@@ -2,6 +2,7 @@ import React from 'react';
 import {Card, Flex, Typography, Form, Input, Button, Alert, Spin} from 'antd'
 import { Link } from 'react-router-dom';
 import useSignup from '../hooks/useSignup';
+import './Register.css'; // optional (can reuse Login.css)
 
 const Register = () => {
     const{loading , error, registerUser} =useSignup();
@@ -9,7 +10,8 @@ const Register = () => {
         registerUser(values);
     }
     return (
-        <Card className='form-container'>
+         <div className="register-page">
+        <Card className='register-card'>
             <Flex>
             {/* form */}
             <Flex vertical flex={1}>
@@ -92,23 +94,28 @@ const Register = () => {
                 htmlType='submit'
                 size='large'
                 className='btn'
+                block
                 >
                     {loading ? <Spin/> : 'Create Account'} 
                 </Button>
             </Form.Item>
 
             <Form.Item>
+                 <Typography.Text type="secondary" className="signup-text">
+              Already have an account?{' '}
                 <Link to="/login">
-                <Button size='large' className='btn'>
+                <Button size='large'  className="signup-link" type='link' >
                     Sign In 
                 </Button>
                 </Link>
+                </Typography.Text>
             </Form.Item>
         </Form>
             </Flex>
 
         </Flex>
         </Card>
+        </div>
     )
 }
 

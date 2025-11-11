@@ -1,0 +1,62 @@
+/* Full page center */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f0f2f5, #dfe6ed);
+  padding: 20px;
+}
+
+/* Card styling */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+/* Inner spacing so it doesn't feel cramped */
+.login-content {
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+.title {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.slogan {
+  text-align: center;
+  color: #888;
+  margin-bottom: 24px;
+}
+
+/* Form spacing */
+.login-form .ant-form-item {
+  margin-bottom: 18px;
+}
+
+.alert {
+  margin-bottom: 16px;
+}
+
+/* Signup link */
+.signup-text {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.signup-link {
+  color: #1677ff;
+  font-weight: 500;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
