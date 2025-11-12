@@ -1,6 +1,6 @@
 import React,{useState, useEffect, useRef} from 'react';
 import axios from 'axios'
-import { Space, Table, Tag, Button, Modal, Form, Input } from 'antd';
+import { Space, Table, Tag, Button, Modal, Form, Input, InputNumber } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import{useAuth} from '../../contexts/AuthContext';
 import EditCurrencyModal from './EditCurrencyModal';
@@ -180,6 +180,11 @@ const Currency = () => {
     ...getColumnSearchProps('code'),
   },
   {
+    title: 'Currency Converted to US Dollar',
+    dataIndex: 'convertCurrency',
+    key: 'convertCurrency',
+  },
+  {
     title: 'Action',
     key: 'action',
     render: (_, record) => (
@@ -227,6 +232,14 @@ const Currency = () => {
                 rules={[{ required: true, message: 'Please input your Currency code!' }]}
                 >
                 <Input placeholder='enter currency code'/>
+                </Form.Item>
+
+                <Form.Item
+                label="Currency Convert to US Dollar"
+                name="convertCurrency"
+                rules={[{ required: true, message: 'Please input your currency Convert to Dollar!' }]}
+                >
+                <InputNumber placeholder='enter the number to convert to dollar ' style={{width:'100%'}}/>
                 </Form.Item>
 
                 <Form.Item label={null}>

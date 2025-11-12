@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Input } from 'antd';
+import { Button, Modal, Form, Input, InputNumber } from 'antd';
 import{useAuth} from '../../contexts/AuthContext';
 import {EditFilled} from '@ant-design/icons';
 
 const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
 
       const [form] = Form.useForm();
+
     
       // When editing: populate form fields
       useEffect(() => {
@@ -13,6 +14,8 @@ const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
           form.setFieldsValue({
             name: currencyObj.name,
             code: currencyObj.code,
+            convertCurrency: currencyObj.convertCurrency,
+
           });
         }
       }, [currencyObj]);
@@ -39,7 +42,7 @@ const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/currency/${currencyObj._id}`,{
+                         const res = await fetch(`http://localhost:3000/api/currency/${currencyObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',
@@ -97,6 +100,14 @@ const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
                 rules={[{ required: true, message: 'Please input the code!' }]}
                 >
                 <Input placeholder='enter currency code'/>
+                </Form.Item>
+
+                <Form.Item
+                label="Currency Convert to US Dollar"
+                name="convertCurrency"
+                rules={[{ required: true, message: 'Please input your currency Convert to Dollar!' }]}
+                >
+                <InputNumber placeholder='enter the number to convert to dollar ' style={{width:'100%'}}/>
                 </Form.Item>
 
                 <Form.Item label={null}>

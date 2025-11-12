@@ -10,6 +10,10 @@ const currencySchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    convertCurrency:{
+        type: mongoose.Schema.Types.Decimal128,
+        required:true,
+    },
 
 })
 

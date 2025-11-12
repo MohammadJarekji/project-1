@@ -27,6 +27,7 @@ const dieselRoutes = require('./routes/dieselRoutes');
 const paymentOrderRoutes = require('./routes/paymentOrderRoutes');
 const receiptOrderRoutes = require('./routes/receiptOrderRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
@@ -58,6 +59,7 @@ app.use('/api/diesel', dieselRoutes);
 app.use('/api/paymentOrder', paymentOrderRoutes);
 app.use('/api/receiptOrder', receiptOrderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/report', reportRoutes);
 
 // Serve static files from React (the dist folder)
 app.use(express.static(path.join(__dirname, '../client/dist')));

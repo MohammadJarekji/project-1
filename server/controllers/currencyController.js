@@ -1,14 +1,22 @@
 const Currency = require('../models/currencyModel');
 const User = require('../models/userModel');
+const mongoose = require('mongoose');
 
 exports.addCurrency = async (req, res) =>{
     try{
-        const {name, code} = req.body;
+        const {name, code, convertCurrency} = req.body;
+
+        // Convert decimal Convert Currency
+                const decimalConvertCurrency=
+                                    convertCurrency !== undefined && convertCurrency !== null && convertCurrency !== ''
+                                    ? mongoose.Types.Decimal128.fromString(convertCurrency.toString())
+                                    : null;
 
         // Create a new currency
         const newCurrency = new Currency({
             name,
             code,
+            convertCurrency:decimalConvertCurrency,
         });
 
         await newCurrency.save();
@@ -22,7 +30,19 @@ exports.addCurrency = async (req, res) =>{
 exports.getCurrency = async (req, res)=>{
     try{
         const currency = await Currency.find();
-        return res.status(200).json({success: true, currency}); 
+
+         const formattedcurrency = currency.map(p => {
+            const convertCurrency = p.convertCurrency && p.convertCurrency.toString ? parseFloat(p.convertCurrency.toString()) : p.convertCurrency;
+
+      return {
+        ...p.toObject(),
+        convertCurrency,       // convert Mongoose doc to plain object
+          // overwrite price with plain number
+         
+      };
+    });
+
+        return res.status(200).json({success: true, currency:formattedcurrency}); 
     }catch (error){
         console.error('Error fetching currency: ', error);
         return res.status(500).json({success: false, message:'Server error'})
@@ -32,12 +52,19 @@ exports.getCurrency = async (req, res)=>{
 exports.updateCurrency = async (req, res)=>{
     try{
         const{ id } = req.params;
-        const {name, code} = req.body;
+        const {name, code, convertCurrency} = req.body;
+
+        // Convert decimal Convert Currency
+                const decimalConvertCurrency=
+                                    convertCurrency !== undefined && convertCurrency !== null && convertCurrency !== ''
+                                    ? mongoose.Types.Decimal128.fromString(convertCurrency.toString())
+                                    : null;
 
         // update the currency
         const updatedCurrency = await Currency.findByIdAndUpdate(id, {
             name,
             code,
+            convertCurrency:decimalConvertCurrency,
         },{new:true});
 
         if(!updatedCurrency) {
