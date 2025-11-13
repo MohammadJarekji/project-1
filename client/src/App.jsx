@@ -28,7 +28,7 @@ import Diesel from './pages/Diesel/Diesel';
 import PaymentOrder from './pages/PaymentOrder/PaymentOrder';
 import ReceiptOrder from './pages/ReceiptOrder/ReceiptOrder';
 import FirstPage from './pages/First Page/FirstPage';
-import CustomerReport from './pages/Reports/customerReport';
+import CustomerReport from './pages/Reports/CustomerReport';
 import VendorReport from './pages/Reports/VendorReport';
 
 const App = () => {
