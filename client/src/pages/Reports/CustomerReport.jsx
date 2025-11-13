@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { SearchOutlined } from '@ant-design/icons';
-import { Table, Spin, Input, Space, Button } from "antd";
+import { Table, Spin, Input, Space, Button, Typography } from "antd";
 
 const CustomerReport = () => {
      const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { Text, Title } = Typography;
 
   // /////////////////////////////////////////////////////////////////
 
@@ -112,55 +113,102 @@ const CustomerReport = () => {
     fetchReport();
   }, []);
 
-  const columns = [
+   // Columns for the nested (expanded) table
+  const nestedColumns = [
     {
-      title: "Customer Name",
-      dataIndex: "name",
-      key: "name",
-      ...getColumnSearchProps('name'),
+      title: "Sales Order #",
+      dataIndex: "soNumber",
+      key: "soNumber",
+      render: (text) => (text ? text : "-"),
+      align: "center",
     },
     {
-      title: "Contact Name",
-      dataIndex: "contactName",
-      key: "contactName",
-      ...getColumnSearchProps('contactName'),
+      title: "Sales Amount (USD)",
+      dataIndex: "salesUSD",
+      key: "salesUSD",
+      render: (value) => (value ? `$${value.toFixed(0)}` : "-"),
+      align: "right",
     },
     {
-      title: "Phone Number",
-      dataIndex: "contactPhoneNumber",
-      key: "contactPhoneNumber",
-      ...getColumnSearchProps('contactPhoneNumber'),
+      title: "Receipt Order #",
+      dataIndex: "recNumber",
+      key: "recNumber",
+      render: (text) => (text ? text : "-"),
+      align: "center",
     },
     {
-      title: "Total Sales (USD)",
-      dataIndex: "totalSales",
-      key: "totalSales",
-      render: (value) => `$${value.toFixed(2)}`,
-      sorter: (a, b) => a.totalSales - b.totalSales,
-    },
-    {
-      title: "Total Receipts (USD)",
-      dataIndex: "totalReceipts",
-      key: "totalReceipts",
-      render: (value) => `$${value.toFixed(2)}`,
-      sorter: (a, b) => a.totalReceipts - b.totalReceipts,
-    },
-    {
-      title: "Outstanding (USD)",
-      dataIndex: "outstanding",
-      key: "outstanding",
-      render: (value) => `$${value.toFixed(2)}`,
-      sorter: (a, b) => a.outstanding - b.outstanding,
+      title: "Receipt Amount (USD)",
+      dataIndex: "receiptUSD",
+      key: "receiptUSD",
+      render: (value) => (value ? `$${value.toFixed(0)}` : "-"),
+      align: "right",
     },
   ];
 
+  // Main customer table (expandable)
+  const customerColumns = [
+    {
+      title: "Customer Name",
+      dataIndex: "customerName",
+      key: "customerName",
+      ...getColumnSearchProps('customerName'),
+      render: (text) => <Text strong>{text}</Text>,
+    },
+  ];
+
+  // Build the expanded rows — align sales and receipts side by side
+  const expandedRowRender = (record) => {
+    const sales = record.salesOrders || [];
+    const receipts = record.receiptOrders || [];
+    const maxRows = Math.max(sales.length, receipts.length);
+
+    // Align them row by row
+    const combined = [];
+    for (let i = 0; i < maxRows; i++) {
+      combined.push({
+        key: i,
+        soNumber: sales[i]?.soNumber || "",
+        salesUSD: sales[i]?.totalUSD || null,
+        recNumber: receipts[i]?.recNumber || "",
+        receiptUSD: receipts[i]?.totalUSD || null,
+      });
+    }
+
+    return (
+      <div>
+        <Table
+          columns={nestedColumns}
+          dataSource={combined}
+          pagination={false}
+          size="small"
+          footer={() => (
+            <div style={{ textAlign: "right" }}>
+              <Text strong>Total Sales: </Text>${record.totalSales.toFixed(0)}{" "}
+              &nbsp;&nbsp;&nbsp;
+              <Text strong>Total Receipts: </Text>${record.totalReceipts.toFixed(0)}{" "}
+              &nbsp;&nbsp;&nbsp;
+              <Text strong>Outstanding: </Text>
+              <Text type={record.outstanding > 0 ? "danger" : "success"}>
+                ${record.outstanding.toFixed(0)}
+              </Text>
+            </div>
+          )}
+        />
+      </div>
+    );
+  };
+
   return (
     <Spin spinning={loading}>
+      <Title level={4} style={{ marginBottom: 16 }}>
+        Customer Financial Report
+      </Title>
       <Table
-        columns={columns}
+        columns={customerColumns}
+        expandable={{ expandedRowRender }}
         dataSource={data.map((item) => ({ ...item, key: item.customerId }))}
-        pagination={{ pageSize: 10 }}
-        title={() => <h2>Customers Reports</h2>}
+        pagination={{ pageSize: 5, showSizeChanger: true }}
+        bordered
       />
     </Spin>
   );

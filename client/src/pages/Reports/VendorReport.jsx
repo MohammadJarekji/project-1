@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { SearchOutlined } from '@ant-design/icons';
-import { Table, Spin, Input, Space, Button } from "antd";
+import { Table, Spin, Input, Space, Button, Typography } from "antd";
 
 const VendorReport = () => {
     const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { Text, Title } = Typography;
 
   // /////////////////////////////////////////////////////////////////
 
@@ -112,55 +113,102 @@ const VendorReport = () => {
     fetchReport();
   }, []);
 
-  const columns = [
+   // Columns for the nested (expanded) table
+  const nestedColumns = [
     {
-      title: "Vendor Name",
-      dataIndex: "name",
-      key: "name",
-      ...getColumnSearchProps('name'),
+      title: "Purchase Order #",
+      dataIndex: "poNumber",
+      key: "poNumber",
+      render: (text) => (text ? text : "-"),
+      align: "center",
     },
     {
-      title: "Contact Name",
-      dataIndex: "contactName",
-      key: "contactName",
-      ...getColumnSearchProps('contactName'),
+      title: "Purchase Amount (USD)",
+      dataIndex: "purchaseUSD",
+      key: "purchaseUSD",
+      render: (value) => (value ? `$${value.toFixed(0)}` : "-"),
+      align: "right",
     },
     {
-      title: "Phone Number",
-      dataIndex: "contactPhoneNumber",
-      key: "contactPhoneNumber",
-      ...getColumnSearchProps('contactPhoneNumber'),
+      title: "Payment Order #",
+      dataIndex: "payNumber",
+      key: "payNumber",
+      render: (text) => (text ? text : "-"),
+      align: "center",
     },
     {
-      title: "Total Purchase (USD)",
-      dataIndex: "totalPurchase",
-      key: "totalPurchase",
-      render: (value) => `$${value.toFixed(2)}`,
-      sorter: (a, b) => a.totalPurchase - b.totalPurchase,
-    },
-    {
-      title: "Total Payments (USD)",
-      dataIndex: "totalPayments",
-      key: "totalPayments",
-      render: (value) => `$${value.toFixed(2)}`,
-      sorter: (a, b) => a.totalPayments - b.totalPayments,
-    },
-    {
-      title: "Outstanding (USD)",
-      dataIndex: "outstanding",
-      key: "outstanding",
-      render: (value) => `$${value.toFixed(2)}`,
-      sorter: (a, b) => a.outstanding - b.outstanding,
+      title: "Payment Amount (USD)",
+      dataIndex: "paymentUSD",
+      key: "paymentUSD",
+      render: (value) => (value ? `$${value.toFixed(0)}` : "-"),
+      align: "right",
     },
   ];
 
+  // Main vendor table (expandable)
+  const vendorColumns = [
+    {
+      title: "Vendor Name",
+      dataIndex: "vendorName",
+      key: "vendorName",
+      ...getColumnSearchProps('vendorName'),
+      render: (text) => <Text strong>{text}</Text>,
+    },
+  ];
+
+  // Build the expanded rows — align purchase and payment orders side by side
+  const expandedRowRender = (record) => {
+    const purchaseOrders = record.purchaseOrders || [];
+    const paymentOrders = record.paymentOrders || [];
+    const maxRows = Math.max(purchaseOrders.length, paymentOrders.length);
+
+    // Align them row by row
+    const combined = [];
+    for (let i = 0; i < maxRows; i++) {
+      combined.push({
+        key: i,
+        poNumber: purchaseOrders[i]?.poNumber || "",
+        purchaseUSD: purchaseOrders[i]?.totalUSD || null,
+        payNumber: paymentOrders[i]?.payNumber || "",
+        paymentUSD: paymentOrders[i]?.totalUSD || null,
+      });
+    }
+
+    return (
+      <div>
+        <Table
+          columns={nestedColumns}
+          dataSource={combined}
+          pagination={false}
+          size="small"
+          footer={() => (
+            <div style={{ textAlign: "right" }}>
+              <Text strong>Total Purchases: </Text>${record.totalPurchases.toFixed(0)}{" "}
+              &nbsp;&nbsp;&nbsp;
+              <Text strong>Total Payments: </Text>${record.totalPayments.toFixed(0)}{" "}
+              &nbsp;&nbsp;&nbsp;
+              <Text strong>Outstanding: </Text>
+              <Text type={record.outstanding > 0 ? "danger" : "success"}>
+                ${record.outstanding.toFixed(0)}
+              </Text>
+            </div>
+          )}
+        />
+      </div>
+    );
+  };
+
   return (
     <Spin spinning={loading}>
+      <Title level={4} style={{ marginBottom: 16 }}>
+        Vendor Financial Report
+      </Title>
       <Table
-        columns={columns}
+        columns={vendorColumns}
+        expandable={{ expandedRowRender }}
         dataSource={data.map((item) => ({ ...item, key: item.vendorId }))}
-        pagination={{ pageSize: 10 }}
-        title={() => <h2>Vendors Reports</h2>}
+        pagination={{ pageSize: 5, showSizeChanger: true }}
+        bordered
       />
     </Spin>
   );
