@@ -167,7 +167,7 @@ const ReceiptOrder = () => {
             try{
     
                     //  const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder/add',{
-                    const res = await fetch('http://localhost:3000/api/receiptOrder/add',{
+                    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -216,7 +216,7 @@ const ReceiptOrder = () => {
     const fetchReceiptOrder = async ()=>{
         try{
             // const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder',{
-            const res = await fetch('http://localhost:3000/api/receiptOrder',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/receiptOrder',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

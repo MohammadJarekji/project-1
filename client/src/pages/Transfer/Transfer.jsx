@@ -187,7 +187,7 @@ const Transfer = () => {
             };
             try{
     
-                     const res = await fetch('http://localhost:3000/api/transfer/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/transfer/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -211,7 +211,7 @@ const Transfer = () => {
 
     const fetchTransfer = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/transfer',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/transfer',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

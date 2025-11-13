@@ -190,7 +190,7 @@ const Customer = () => {
 
     const fetchCustomer = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/customer',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/customer',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

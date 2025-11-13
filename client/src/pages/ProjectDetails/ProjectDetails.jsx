@@ -142,7 +142,7 @@ const ProjectDetails = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch('http://localhost:3000/api/projectDetails/add',{
+                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/projectDetails/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -166,7 +166,7 @@ const ProjectDetails = () => {
 
     const fetchProjectDetails = async ()=>{
         try{
-            const res = await fetch('http://localhost:3000/api/projectDetails',{
+            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/projectDetails',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
