@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UserOutlined,
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons';
@@ -30,7 +29,7 @@ import {
   AiFillDashboard,
 } from 'react-icons/ai';
 
-import { Button, Layout, Menu, theme, Avatar, Dropdown, Space } from 'antd';
+import { Button, Layout, Menu, theme,} from 'antd';
 import Products from './Products/Products';
 import { Link, Outlet } from 'react-router-dom';
 
@@ -89,6 +88,14 @@ const Dashboard = () => {
       { key: '15', icon: <AiOutlineSwap />, label: <Link to="/transfer">Transfer</Link> },
     ],
   },
+  {
+    type: 'group',
+    label: 'Reports',
+    children: [
+      { key: '23', icon: <AiOutlineFileText />, label: <Link to="/customersReports">Cutomers Reports</Link> },
+      { key: '24', icon: <AiOutlineFileText />, label: <Link to="/vendorsReports">Vendors Reports</Link> },
+    ],
+  },
 ];
 
       // Map your route paths to menu keys
@@ -114,7 +121,9 @@ const Dashboard = () => {
     '/diesel': '19',
     '/paymentOrder': '20',
     '/receiptOrder': '21',
-    '/dashboard':'22'
+    '/dashboard':'22',
+    '/customersReports':'23',
+    '/vendorsReports':'24',
   };
 
   

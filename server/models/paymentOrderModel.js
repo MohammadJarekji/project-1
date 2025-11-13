@@ -12,9 +12,11 @@ const paymentOrderSchema = new mongoose.Schema({
     },
     amount:{
         type: mongoose.Schema.Types.Decimal128,
+        required: true,
     },
     currencyId:{
         type:mongoose.Schema.Types.ObjectId, ref:"Currency",
+        required: true,
     },
     date:{
         type:Date,

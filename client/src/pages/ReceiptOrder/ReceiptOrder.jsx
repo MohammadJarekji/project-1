@@ -371,6 +371,7 @@ const ReceiptOrder = () => {
                   <Form.Item
                   label="Amount"
                   name="amount"
+                  rules={[{ required: true, message: 'Please enter the amount!' }]}
                   >
                   <InputNumber placeholder="Please enter the amount" style={{width:'100%'}}/>
                   </Form.Item>
@@ -383,6 +384,7 @@ const ReceiptOrder = () => {
                 <Form.Item
                 label="Currency"
                 name="currencyId"
+                rules={[{ required: true, message: 'Please choose the currency!' }]}
                 >
                     <Select 
                       placeholder="Select Currency">

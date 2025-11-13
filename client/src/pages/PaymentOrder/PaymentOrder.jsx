@@ -360,6 +360,7 @@ console.log("Data: ",data)
                   <Form.Item
                   label="Amount"
                   name="amount"
+                  rules={[{ required: true, message: 'Please enter the amount!' }]}
                   >
                   <InputNumber placeholder="Please enter the amount" style={{width:'100%'}}/>
                   </Form.Item>
@@ -372,6 +373,7 @@ console.log("Data: ",data)
                 <Form.Item
                 label="Currency"
                 name="currencyId"
+                rules={[{ required: true, message: 'Please choose currency!' }]}
                 >
                     <Select 
                       placeholder="Select Currency">

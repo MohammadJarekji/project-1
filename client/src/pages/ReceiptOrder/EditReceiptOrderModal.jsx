@@ -87,7 +87,7 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
             };
             try{
                     //  const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/receiptOrder/${receiptOrderObj._id}`,{
-                      const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/receiptOrder/${receiptOrderObj._id}`,{
+                      const res = await fetch(`http://localhost:3000/api/receiptOrder/${receiptOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
@@ -154,6 +154,7 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
                      <Form.Item
                      label="Amount"
                      name="amount"
+                     rules={[{ required: true, message: 'Please enter the amount!' }]}
                      >
                      <InputNumber placeholder="Please enter the amount" style={{width:'100%'}}/>
                      </Form.Item>
@@ -166,6 +167,7 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
                    <Form.Item
                    label="Currency"
                    name="currencyId"
+                   rules={[{ required: true, message: 'Please choose the currency!' }]}
                    >
                        <Select 
                          placeholder="Select Currency">

@@ -3,14 +3,13 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Button, Modal, Space } from 'antd';
 import {DeleteFilled} from '@ant-design/icons';
 
-
 const DeletePurchaseOrderModal = ({purchaseOrderObj,fetchPurchaseOrder}) => {
 
     const { confirm } = Modal;
 
                     const handleDelete = async (id)=>{           
                     try{
-                        const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/purchaseOrder/${id}`,{
+                        const response = await fetch(`http://localhost:3000/api/purchaseOrder/${id}`,{
                                 method:'DELETE',
                             }
                         );
