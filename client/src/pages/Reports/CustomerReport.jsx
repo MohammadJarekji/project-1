@@ -101,7 +101,7 @@ const CustomerReport = () => {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/report/customers');// your endpoint
+        const response = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/report/customers');// your endpoint
         const data = await response.json();
         setData(data.data);
       } catch (err) {

@@ -87,7 +87,7 @@ const EditReceiptOrderModal = ({receiptOrderObj, fetchReceiptOrder, customer, cu
             };
             try{
                     //  const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/receiptOrder/${receiptOrderObj._id}`,{
-                      const res = await fetch(`http://localhost:3000/api/receiptOrder/${receiptOrderObj._id}`,{
+                      const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/receiptOrder/${receiptOrderObj._id}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json',
