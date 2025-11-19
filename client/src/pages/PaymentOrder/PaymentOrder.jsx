@@ -206,7 +206,7 @@ console.log("Data: ",data)
     const fetchPaymentOrder = async ()=>{
         try{
             // const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder',{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/paymentOrder',{
+            const res = await fetch('http://localhost:3000/api/paymentOrder',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
