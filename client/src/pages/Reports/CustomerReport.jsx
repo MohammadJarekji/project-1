@@ -193,7 +193,7 @@ const CustomerReport = () => {
       render: (text,record) =>( 
       <Space>
         <Text strong>{text}</Text>
-      <Button type="primary" onClick={() => exportCustomerToExcel(record)}>
+      <Button type="primary" style={{background:'green'}} onClick={() => exportCustomerToExcel(record)}>
             Export to Excel
           </Button>
           </Space>

@@ -191,7 +191,7 @@ const VendorReport = () => {
       render: (text, record) => (
         <Space>
                 <Text strong>{text}</Text>
-              <Button type="primary" onClick={() => exportVendorToExcel(record)}>
+              <Button type="primary" style={{background:'green'}} onClick={() => exportVendorToExcel(record)}>
                     Export to Excel
                   </Button>
                   </Space>
