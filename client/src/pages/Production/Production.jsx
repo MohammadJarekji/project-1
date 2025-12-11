@@ -253,7 +253,7 @@ const Production = () => {
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <EditProductionModal productionObj={record} fetchProduction={fetchProduction} productSelection={productSelection}/>
+        <EditProductionModal productionObj={record} fetchProduction={fetchProduction} productSelection={productSelection} product={product}/>
         <DeleteProductionModal productionObj={record} fetchProduction={fetchProduction}/>
       </Space>
     ),

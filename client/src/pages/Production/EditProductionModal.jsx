@@ -5,7 +5,7 @@ import {EditFilled} from '@ant-design/icons';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-const EditProductionModal = ({productionObj, fetchProduction,  productSelection}) => {
+const EditProductionModal = ({productionObj, fetchProduction,  productSelection, product}) => {
 
       const [form] = Form.useForm();
     
@@ -13,6 +13,7 @@ const EditProductionModal = ({productionObj, fetchProduction,  productSelection}
       useEffect(() => {
         if (productionObj) {
           form.setFieldsValue({
+            productId:productionObj.productId,
             name: productionObj.name,         
             assembledProduct: productionObj.assembledProduct,
           });
@@ -90,10 +91,15 @@ const EditProductionModal = ({productionObj, fetchProduction,  productSelection}
             >
                 <Form.Item
                                label="Production Name"
-                               name="name"
+                               name="productId"
                                >
                
-                               <Input placeholder='Input Production Name'/>
+                               <Select
+                                    showSearch
+                                    placeholder="Select a product"
+                                    optionFilterProp="label"
+                                    options={product}
+                                  />
                                </Form.Item>
                              
                              {/* ///////////////////////////////////////////////////////////////////////////////////// */}
