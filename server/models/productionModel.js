@@ -15,9 +15,10 @@ const asproductSchema = new mongoose.Schema({
 
 const productionSchema = new mongoose.Schema({
 
-    name:{
-      type:String,
-    },
+    productId:{
+    type:mongoose.Schema.Types.ObjectId, ref:"Product",
+    required:true, 
+  },
     assembledProduct: [asproductSchema],
     
 },{

@@ -7,48 +7,54 @@ const mongoose = require('mongoose');
 
 exports.addProduction = async (req, res) => {
   try {
-    const { assembledProduct, name } = req.body;
-
-    // Prepare processed products for saving in productionOrder
-    const processedProduct = assembledProduct.map(item => ({
-      productId: item.productId,  // FIXED: was 'staffId'
-      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
-                          ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
-                          : null,
-    }));
+    const { assembledProduct, productId } = req.body;
 
     // Save production order
+    const processedProduct = assembledProduct.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity !== undefined && item.quantity !== null && item.quantity !== ''
+                  ? mongoose.Types.Decimal128.fromString(item.quantity.toString())
+                  : null,
+    }));
+
     const newProductionOrder = new ProductionOrder({
-      name,
+      productId,
       assembledProduct: processedProduct,
     });
 
     await newProductionOrder.save();
 
-    // Loop through products and increase their quantities
     for (const item of assembledProduct) {
-      const product = await Product.findById(item.productId);
-      if (!product) {
-        console.warn(`Product not found: ${item.productId}`);
-        continue; // Skip to next
+      // 1️⃣ Subtract component (lines) quantities from their respective products
+      const assembly = await AssemblyOrder.findOne({ productId: item.productId }).lean();
+      if (assembly) {
+        for (const line of assembly.lines) {
+          const componentProduct = await Product.findById(line.productId);
+          if (componentProduct) {
+            const currentQty = parseFloat(componentProduct.quantity.toString());
+            const subtractQty = parseFloat(line.quantity.toString()) * parseFloat(item.quantity.toString());
+            const updatedQty = currentQty - subtractQty;
+            componentProduct.quantity = mongoose.Types.Decimal128.fromString(
+              (updatedQty < 0 ? 0 : updatedQty).toString() // prevent negative quantities
+            );
+            await componentProduct.save();
+          }
+        }
       }
 
-      const currentQty = parseFloat(product.quantity.toString());
-      const addedQty = parseFloat(item.quantity);
-      const updatedQty = currentQty + addedQty;
-
-      product.quantity = updatedQty !== undefined && updatedQty !== null && updatedQty !== ''
-                          ? mongoose.Types.Decimal128.fromString(updatedQty.toString())
-                          : null;
-
-      await product.save();
+      // 2️⃣ Add assembled product quantity to its product record
+      const assembledProductRecord = await Product.findById(item.productId);
+      if (assembledProductRecord) {
+        const currentQty = parseFloat(assembledProductRecord.quantity.toString());
+        const updatedQty = currentQty + parseFloat(item.quantity.toString());
+        assembledProductRecord.quantity = mongoose.Types.Decimal128.fromString(updatedQty.toString());
+        await assembledProductRecord.save();
+      }
     }
-
-    console.log("newProductionOrder:", newProductionOrder);
 
     return res.status(201).json({
       success: true,
-      message: 'ProductionOrder added successfully'
+      message: 'ProductionOrder added successfully with component subtraction and assembled product addition'
     });
 
   } catch (error) {
@@ -78,7 +84,7 @@ exports.getProduction = async (req, res) => {
     return res.status(200).json({
       success: true,
       production: formattedOrders,
-      product
+      product,
     });
   } catch (error) {
     console.error("Error fetching ProductionOrders:", error);

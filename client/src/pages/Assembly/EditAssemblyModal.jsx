@@ -95,7 +95,7 @@ const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, pro
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/assembly/${assemblyObj._id}`,{
+                         const res = await fetch(`http://localhost:3000/api/assembly/${assemblyObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

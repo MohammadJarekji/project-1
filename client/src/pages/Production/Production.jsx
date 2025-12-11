@@ -15,6 +15,7 @@ const Production = () => {
     const [data, setData] = useState([]);
     const [product, setProduct] = useState([]);
     const [productSelection, setProductSelection] = useState([]);
+    const [allproduct, setAllProduct] = useState([]);
 
     // /////////////////////////////////////////////////////////////////
 
@@ -133,7 +134,7 @@ const Production = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/production/add',{
+                     const res = await fetch('http://localhost:3000/api/production/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -157,7 +158,7 @@ const Production = () => {
 
     const fetchProduction = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/production',{
+            const res = await fetch('http://localhost:3000/api/production',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -166,7 +167,7 @@ const Production = () => {
              const result = await res.json();
              setData(result.production)
 
-            console.log("result: ",result)
+            console.log("result: ",result.production)
 
             const productMapped = result.product.map( prod =>({
               value: prod._id,
@@ -184,6 +185,7 @@ const Production = () => {
 
             setProduct(productMapped)
             setProductSelection(assembledproductMapped)
+            setAllProduct(result.product)
           
         } catch (error) {
             console.error("Error fetching user: ",error)
@@ -191,7 +193,13 @@ const Production = () => {
     }
 
     const getProductLabel = (productId) => {
+      console.log("left2: ",productId)
     const found = productSelection.find(v => v.value === productId);
+    return found ? found.label : 'Unknown Product';
+  };
+
+  const getAllProductLabel = (productId) => {
+    const found = product.find(v => v.value === productId);
     return found ? found.label : 'Unknown Product';
   };
 
@@ -203,9 +211,10 @@ const Production = () => {
 
   {
     title: 'Production Name',
-    dataIndex: 'name',
-    key: 'name',
-    ...getColumnSearchProps('name'),
+    dataIndex: 'product',
+    key: 'product',
+     ...getColumnSearchProps('product', (record) => getAllProductLabel(record.productId)),
+    render: (text, record) => getAllProductLabel(record.productId),
   },
   {
     title: 'Assembled Product',
@@ -277,10 +286,16 @@ const Production = () => {
 
                 <Form.Item
                 label="Production Name"
-                name="name"
+                name="productId"
+                rules={[{ required: true, message: 'Please select a product!' }]}
                 >
 
-                <Input placeholder='Input Production Name'/>
+                <Select
+                    showSearch
+                    placeholder="Select a product"
+                    optionFilterProp="label"
+                    options={product}
+                  />
                 </Form.Item>
               
               {/* ///////////////////////////////////////////////////////////////////////////////////// */}
