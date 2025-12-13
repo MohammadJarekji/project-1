@@ -87,7 +87,7 @@ const StaffHours = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const res = await fetch('http://localhost:3000/api/StaffWorkHours/add', {
+      const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/StaffWorkHours/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const StaffHours = () => {
 
 const fetchStaffWork = async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/StaffWorkHours', {
+    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/StaffWorkHours', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
