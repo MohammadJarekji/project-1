@@ -86,7 +86,7 @@ const Dashboard = () => {
       { key: '19', icon: <AiOutlineThunderbolt />, label: <Link to="/diesel">Diesel</Link> },
       { key: '12', icon: <AiOutlineAudit />, label: <Link to="/asset">Asset</Link> },
       { key: '15', icon: <AiOutlineSwap />, label: <Link to="/transfer">Transfer</Link> },
-      // { key: '25', icon: <AiOutlineSwap />, label: <Link to="/Staff-Working-Hours">Staff Working Hours</Link> },
+      { key: '25', icon: <AiOutlineSwap />, label: <Link to="/Staff-Working-Hours">Staff Working Hours</Link> },
     ],
   },
   {

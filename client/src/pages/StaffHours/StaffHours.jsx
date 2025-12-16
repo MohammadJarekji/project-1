@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Space, Table, Button, Modal, Form, Input, InputNumber } from 'antd';
 import { SearchOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import Highlighter from 'react-highlight-words';
+import EditStaffHoursModal from './EditStaffHoursModal';
 import dayjs from 'dayjs';
 
 const StaffHours = () => {
@@ -73,9 +75,14 @@ const StaffHours = () => {
       const fieldValue = record[dataIndex];
       return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
     },
-    render: (text) =>
+      render: (text) =>
       searchedColumn === dataIndex ? (
-        <span style={{ backgroundColor: '#ffc069', padding: 0 }}>{text}</span>
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText || '']}
+          autoEscape
+          textToHighlight={String(text ?? '')}
+        />
       ) : (
         String(text ?? '')
       ),
@@ -87,7 +94,7 @@ const StaffHours = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/StaffWorkHours/add', {
+      const res = await fetch('http://localhost:3000/api/StaffWorkHours/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +102,7 @@ const StaffHours = () => {
         body: JSON.stringify(values),
       });
       const result = await res.json();
-      fetchStaffWork();
+      fetchStaffWork(currentDay); // Re-fetch work hours after adding new data
       handleCancel(); // Close modal after submit
     } catch (error) {
       console.error('Error fetching user: ', error);
@@ -103,25 +110,30 @@ const StaffHours = () => {
   };
 
   const onFinish = (values) => {
-    console.log("Result123: ",values)
-    handleSubmit(values);
+    handleSubmit(values); // Submit the form and close modal
     form.resetFields();
   };
 
-const fetchStaffWork = async () => {
+const fetchStaffWork = async (selectedDate) => {
   try {
-    const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/StaffWorkHours', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // Check if selectedDate is valid, otherwise set it to today
+    const dateToFetch = selectedDate ? dayjs(selectedDate).startOf('day') : dayjs().startOf('day');
+
+    const res = await fetch(
+      `http://localhost:3000/api/StaffWorkHours?date=${dateToFetch.toISOString()}`, // Pass the valid date
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     const result = await res.json();
     if (result.workHours && result.workHours.staffHours && result.workHours.staffHours.length > 0) {
-      setStaffData(result.workHours.staffHours); // Extract staff data from the response
+      setStaffData(result.workHours.staffHours); // Set staff data for the selected date
     } else {
-      setStaffData([]); // If no staff data, set it to an empty array
+      setStaffData([]); // If no data found for the selected date
     }
   } catch (error) {
     console.error('Error fetching staff work hours:', error);
@@ -129,60 +141,74 @@ const fetchStaffWork = async () => {
 };
 
   useEffect(() => {
-    fetchStaffWork();
+    fetchStaffWork(currentDay); // Initial data fetch for today
   }, []);
 
   // Move to the next day
   const handleNextDay = () => {
-    setCurrentDay(currentDay.add(1, 'day'));
+    const nextDay = currentDay.add(1, 'day'); // Move to the next day
+    setCurrentDay(nextDay); // Update the current date state
+    fetchStaffWork(nextDay); // Fetch work hours for the next day
   };
 
   // Move to the previous day
   const handlePreviousDay = () => {
-    setCurrentDay(currentDay.subtract(1, 'day'));
+    const prevDay = currentDay.subtract(1, 'day'); // Move to the previous day
+    setCurrentDay(prevDay); // Update the current date state
+    fetchStaffWork(prevDay); // Fetch work hours for the previous day
   };
 
   // Format the date for the table header
   const today = currentDay.format('dddd, MMMM D, YYYY');
 
   // Table columns with nested headers for "Staff" and "Hours"
-const columns = [
-  {
-    title: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-        }}
-      >
-        <Button
-          icon={<LeftOutlined />}
-          onClick={handlePreviousDay}
-          disabled={currentDay.isSame(dayjs(), 'day')} // Disable if today
-          style={{ marginRight: '8px' }}
-        />
-        <span>{today}</span>
-        <Button icon={<RightOutlined />} onClick={handleNextDay} style={{ marginLeft: '8px' }} />
-      </div>
+  const columns = [
+    {
+      title: (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+          }}
+        >
+          <Button
+            icon={<LeftOutlined />}
+            onClick={handlePreviousDay} // Allow navigation to any previous day
+            style={{ marginRight: '8px' }}
+          />
+          <span>{today}</span>
+          <Button icon={<RightOutlined />} onClick={handleNextDay} style={{ marginLeft: '8px' }} />
+        </div>
+      ),
+      children: [
+        {
+          title: 'Staff Name',
+          dataIndex: 'name',
+          key: 'name',
+          ...getColumnSearchProps('name'),
+        },
+        {
+          title: 'Hours',
+          dataIndex: 'hours',
+          key: 'hours',
+          ...getColumnSearchProps('hours'),
+        },
+      ],
+    },
+    ...(currentDay.isSame(dayjs(), 'day')?[
+    {
+    title: 'Action',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        <EditStaffHoursModal StaffWorkObj={record} fetchStaffWork={fetchStaffWork}/>
+      </Space>
     ),
-    children: [
-      {
-        title: 'Staff Name',
-        dataIndex: 'name',
-        key: 'name',
-        ...getColumnSearchProps('name'),
-      },
-      {
-        title: 'Hours',
-        dataIndex: 'hours',
-        key: 'hours',
-        ...getColumnSearchProps('hours'),
-      },
-    ],
   },
-];
+]:[]),
+  ];
 
   return (
     <>
@@ -191,44 +217,33 @@ const columns = [
       </Button>
 
       {/* Add Staff Modal */}
-     <Modal
-  title="Add Staff"
-  closable={true}
-  open={isModalOpen}
-  onCancel={handleCancel}
-  footer={null}
->
-  <Form
-    form={form}
-    name="staffForm"
-    layout="vertical"
-    style={{ maxWidth: 600 }}
-    initialValues={{ remember: true }}
-    onFinish={onFinish} // Call onFinish when form is submitted
-  >
-    <Form.Item label="Staff Name" name="name" rules={[{ required: true, message: 'Please input the staff name!' }]}>
-      <Input placeholder="Enter staff name" />
-    </Form.Item>
+      <Modal title="Add Staff" closable={true} open={isModalOpen} onCancel={handleCancel} footer={null}>
+        <Form
+          form={form}
+          name="staffForm"
+          layout="vertical"
+          style={{ maxWidth: 600 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinish} // Call onFinish when form is submitted
+        >
+          <Form.Item label="Staff Name" name="name" rules={[{ required: true, message: 'Please input the staff name!' }]}>
+            <Input placeholder="Enter staff name" />
+          </Form.Item>
 
-    <Form.Item label="Hours Worked" name="hours" rules={[{ required: true, message: 'Please input hours worked!' }]}>
-      <InputNumber min={1} max={24} placeholder="Enter staf working hours" />
-    </Form.Item>
+          <Form.Item label="Hours Worked" name="hours" rules={[{ required: true, message: 'Please input hours worked!' }]}>
+            <InputNumber min={1} max={24} placeholder="Enter staf working hours" />
+          </Form.Item>
 
-    <Form.Item>
-      <Button style={{ float: 'right' }} type="primary" htmlType="submit">
-        Submit
-      </Button>
-    </Form.Item>
-  </Form>
-</Modal>
+          <Form.Item>
+            <Button style={{ float: 'right' }} type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {/* Staff Table */}
-      <Table
-        columns={columns}
-        dataSource={staffData}
-        rowKey="name"
-        scroll={{ x: 'calc(100vh - 200px)' }}
-      />
+      <Table columns={columns} dataSource={staffData} rowKey="name" scroll={{ x: 'calc(100vh - 200px)' }} />
     </>
   );
 };

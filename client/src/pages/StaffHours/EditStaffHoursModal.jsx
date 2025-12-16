@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Input, InputNumber } from 'antd';
+import { Button, Modal, Form, Input, InputNumber, message  } from 'antd';
 import{useAuth} from '../../contexts/AuthContext';
 import {EditFilled} from '@ant-design/icons';
 
-const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
+const EditStaffHoursModalModal = ({StaffWorkObj, fetchStaffWork}) => {
 
       const [form] = Form.useForm();
 
     
       // When editing: populate form fields
       useEffect(() => {
-        if (currencyObj) {
+        if (StaffWorkObj) {
           form.setFieldsValue({
-            name: currencyObj.name,
-            code: currencyObj.code,
-            convertCurrency: currencyObj.convertCurrency,
+            name: StaffWorkObj.name,
+            hours: StaffWorkObj.hours,
 
           });
         }
-      }, [currencyObj]);
+      }, [StaffWorkObj]);
         
             const [isModalOpen, setIsModalOpen] = useState(false);
         
@@ -37,25 +36,44 @@ const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
             setIsModalOpen(false);
           };
         
-            const handleSubmit = async (values)=>{
-                // e.preventDefault();
-                setFormData(values);
-                try{
-        
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/currency/${currencyObj._id}`,{
-                        method:'PUT',
-                        headers:{
-                            'Content-Type':'application/json',
-                        },
-                        body:JSON.stringify(values),
-                    });
-                    const result = await res.json();
-                    await fetchCurrency();
-                    handleCancel();
-                }catch(error){
-                    console.error("Error fetching1 user: ",error)
-                }
-            }
+const handleSubmit = async (values) => {
+  try {
+    const staffName = StaffWorkObj.name; // Current staff name
+    const newStaffName = values.name; // New name
+    const newHours = values.hours; // New hours
+
+    const res = await fetch(`http://localhost:3000/api/StaffWorkHours/workhours`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        staffName,
+        newStaffName,
+        newHours,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (res.status === 200 && result.message === "Staff hours updated successfully") {
+      await fetchStaffWork();  // Refresh data
+      handleCancel();
+      message.success("Staff hours updated successfully");
+    } 
+    else if (res.status === 400 && result.message.includes("duplicate")) {
+      // Handle duplicate name error
+      message.error("Attendance for this staff has already been taken today. Please choose a different name.");
+    } 
+    else {
+      message.error(result.message || "Error updating staff hours");
+      console.error(result);
+    }
+  } catch (error) {
+    console.error("Error updating staff hours:", error);
+    message.error("An unexpected error occurred. Please try again.");
+  }
+};
         
             const onFinish = values => {
                 handleSubmit(values);
@@ -86,28 +104,12 @@ const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
-                <Form.Item
-                label="Category Name"
-                name="name"
-                rules={[{ required: true, message: 'Please input your currency name!' }]}
-                >
-                <Input placeholder='enter currency name'/>
+                <Form.Item label="Staff Name" name="name" rules={[{ required: true, message: 'Please input the staff name!' }]}>
+                  <Input placeholder="Enter staff name" />
                 </Form.Item>
-
-                <Form.Item
-                label="Code"
-                name="code"
-                rules={[{ required: true, message: 'Please input the code!' }]}
-                >
-                <Input placeholder='enter currency code'/>
-                </Form.Item>
-
-                <Form.Item
-                label="Currency Convert to US Dollar"
-                name="convertCurrency"
-                rules={[{ required: true, message: 'Please input your currency Convert to Dollar!' }]}
-                >
-                <InputNumber placeholder='enter the number to convert to dollar ' style={{width:'100%'}}/>
+                
+                <Form.Item label="Hours Worked" name="hours" rules={[{ required: true, message: 'Please input hours worked!' }]}>
+                  <InputNumber min={1} max={24} placeholder="Enter staf working hours" />
                 </Form.Item>
 
                 <Form.Item label={null}>
@@ -121,4 +123,4 @@ const EditCurrencyModal = ({currencyObj, fetchCurrency}) => {
     )
 }
 
-export default EditCurrencyModal
+export default EditStaffHoursModalModal
