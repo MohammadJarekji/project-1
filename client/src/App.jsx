@@ -30,6 +30,7 @@ import ReceiptOrder from './pages/ReceiptOrder/ReceiptOrder';
 import FirstPage from './pages/First Page/FirstPage';
 import CustomerReport from './pages/Reports/CustomerReport';
 import VendorReport from './pages/Reports/VendorReport';
+import StaffHours from './pages/StaffHours/StaffHours';
 
 const App = () => {
   const {isAuthenticated}=useAuth();
@@ -84,6 +85,7 @@ const App = () => {
           <Route path="dashboard" element={<FirstPage />} />
           <Route path="customersReports" element={<CustomerReport />} />
           <Route path="vendorsReports" element={<VendorReport />} />
+          <Route path="Staff-Working-Hours" element={<StaffHours />} />
           <Route index element={<Navigate to="dashboard" />} /> {/* default redirect */}
         </Route>
 

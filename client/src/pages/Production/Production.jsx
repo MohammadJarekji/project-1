@@ -15,6 +15,7 @@ const Production = () => {
     const [data, setData] = useState([]);
     const [product, setProduct] = useState([]);
     const [productSelection, setProductSelection] = useState([]);
+    const [allproduct, setAllProduct] = useState([]);
 
     // /////////////////////////////////////////////////////////////////
 
@@ -182,6 +183,7 @@ const Production = () => {
 
             setProduct(productMapped)
             setProductSelection(assembledproductMapped)
+            setAllProduct(result.product)
           
         } catch (error) {
             console.error("Error fetching user: ",error)
@@ -189,7 +191,13 @@ const Production = () => {
     }
 
     const getProductLabel = (productId) => {
+      console.log("left2: ",productId)
     const found = productSelection.find(v => v.value === productId);
+    return found ? found.label : 'Unknown Product';
+  };
+
+  const getAllProductLabel = (productId) => {
+    const found = product.find(v => v.value === productId);
     return found ? found.label : 'Unknown Product';
   };
 
@@ -201,9 +209,10 @@ const Production = () => {
 
   {
     title: 'Production Name',
-    dataIndex: 'name',
-    key: 'name',
-    ...getColumnSearchProps('name'),
+    dataIndex: 'product',
+    key: 'product',
+     ...getColumnSearchProps('product', (record) => getAllProductLabel(record.productId)),
+    render: (text, record) => getAllProductLabel(record.productId),
   },
   {
     title: 'Assembled Product',
@@ -242,7 +251,7 @@ const Production = () => {
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <EditProductionModal productionObj={record} fetchProduction={fetchProduction} productSelection={productSelection}/>
+        <EditProductionModal productionObj={record} fetchProduction={fetchProduction} productSelection={productSelection} product={product}/>
         <DeleteProductionModal productionObj={record} fetchProduction={fetchProduction}/>
       </Space>
     ),
@@ -275,10 +284,16 @@ const Production = () => {
 
                 <Form.Item
                 label="Production Name"
-                name="name"
+                name="productId"
+                rules={[{ required: true, message: 'Please select a product!' }]}
                 >
 
-                <Input placeholder='Input Production Name'/>
+                <Select
+                    showSearch
+                    placeholder="Select a product"
+                    optionFilterProp="label"
+                    options={product}
+                  />
                 </Form.Item>
               
               {/* ///////////////////////////////////////////////////////////////////////////////////// */}

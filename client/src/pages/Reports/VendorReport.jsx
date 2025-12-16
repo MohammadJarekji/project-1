@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { SearchOutlined } from '@ant-design/icons';
 import { Table, Spin, Input, Space, Button, Typography } from "antd";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const VendorReport = () => {
     const [data, setData] = useState([]);
@@ -98,6 +100,40 @@ const VendorReport = () => {
 
     // ////////////////////////////////////////////////////////////////
 
+
+     // Function to export vendor data to Excel
+    const exportVendorToExcel = (vendor) => {
+        const wsData = [
+            ["Purchase Order #", "Purchase Amount (USD)", "Payment Order #", "Payment Amount (USD)"]
+        ];
+
+        const purchaseOrders = vendor.purchaseOrders || [];
+        const paymentOrders = vendor.paymentOrders || [];
+        const maxRows = Math.max(purchaseOrders.length, paymentOrders.length);
+
+        for (let i = 0; i < maxRows; i++) {
+            wsData.push([
+                purchaseOrders[i]?.poNumber || "",
+                purchaseOrders[i]?.totalUSD != null ? `$${purchaseOrders[i]?.totalUSD}` : "",
+                paymentOrders[i]?.payNumber || "",
+                paymentOrders[i]?.totalUSD != null ? `$${paymentOrders[i]?.totalUSD}` : ""
+            ]);
+        }
+
+        wsData.push([]);
+        wsData.push([
+            `Total Purchases: $${vendor.totalPurchases.toFixed(0)}`,
+            "",
+            `Total Payments: $${vendor.totalPayments.toFixed(0)}`,
+            `Outstanding: $${vendor.outstanding.toFixed(0)}`
+        ]);
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Vendor Report");
+        XLSX.writeFile(wb, `${vendor.vendorName}-report.xlsx`);
+    };
+
   useEffect(() => {
     const fetchReport = async () => {
       try {
@@ -152,7 +188,14 @@ const VendorReport = () => {
       dataIndex: "vendorName",
       key: "vendorName",
       ...getColumnSearchProps('vendorName'),
-      render: (text) => <Text strong>{text}</Text>,
+      render: (text, record) => (
+        <Space>
+                <Text strong>{text}</Text>
+              <Button type="primary" style={{background:'green'}} onClick={() => exportVendorToExcel(record)}>
+                    Export to Excel
+                  </Button>
+                  </Space>
+      )
     },
   ];
 

@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { SearchOutlined } from '@ant-design/icons';
 import { Table, Spin, Input, Space, Button, Typography } from "antd";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const CustomerReport = () => {
      const [data, setData] = useState([]);
@@ -113,6 +115,42 @@ const CustomerReport = () => {
     fetchReport();
   }, []);
 
+
+  // Export to excel
+
+ const exportCustomerToExcel = (customer) => {
+  const sales = customer.salesOrders || [];
+  const receipts = customer.receiptOrders || [];
+  const maxRows = Math.max(sales.length, receipts.length);
+
+  // Build rows for Excel
+  const excelData = [];
+
+  for (let i = 0; i < maxRows; i++) {
+    excelData.push({
+      "Sales Order #": sales[i]?.soNumber || "",
+      "Sales Amount (USD)": sales[i]?.totalUSD ? `$${sales[i].totalUSD}` : "",
+      "Receipt Order #": receipts[i]?.recNumber || "",
+      "Receipt Amount (USD)": receipts[i]?.totalUSD ? `$${receipts[i].totalUSD}` : "",
+    });
+  }
+
+  // Footer row for totals
+  excelData.push({
+    "Sales Order #": `Total Sales: $${customer.totalSales}`,
+    "Sales Amount (USD)": "",
+    "Receipt Order #": `Total Receipts: $${customer.totalReceipts}`,
+    "Receipt Amount (USD)": `Outstanding: $${customer.outstanding}`,
+  });
+
+  // Create workbook
+  const worksheet = XLSX.utils.json_to_sheet(excelData, { skipHeader: false });
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+
+  XLSX.writeFile(workbook, `${customer.customerName}_Report.xlsx`);
+};
+
    // Columns for the nested (expanded) table
   const nestedColumns = [
     {
@@ -152,8 +190,14 @@ const CustomerReport = () => {
       dataIndex: "customerName",
       key: "customerName",
       ...getColumnSearchProps('customerName'),
-      render: (text) => <Text strong>{text}</Text>,
-    },
+      render: (text,record) =>( 
+      <Space>
+        <Text strong>{text}</Text>
+      <Button type="primary" style={{background:'green'}} onClick={() => exportCustomerToExcel(record)}>
+            Export to Excel
+          </Button>
+          </Space>
+    )},
   ];
 
   // Build the expanded rows — align sales and receipts side by side
