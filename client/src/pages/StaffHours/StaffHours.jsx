@@ -94,7 +94,7 @@ const StaffHours = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const res = await fetch('http://localhost:3000/api/StaffWorkHours/add', {
+      const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/StaffWorkHours/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const fetchStaffWork = async (selectedDate) => {
     const dateToFetch = selectedDate ? dayjs(selectedDate).startOf('day') : dayjs().startOf('day');
 
     const res = await fetch(
-      `http://localhost:3000/api/StaffWorkHours?date=${dateToFetch.toISOString()}`, // Pass the valid date
+      `${import.meta.env.VITE_URL_BASE_APP}/api/StaffWorkHours?date=${dateToFetch.toISOString()}`, // Pass the valid date
       {
         method: 'GET',
         headers: {
