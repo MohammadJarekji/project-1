@@ -54,8 +54,6 @@ const EditStaffModal = ({staffObj, fetchStaff}) => {
           });
         }
       }, [staffObj]);
-
-      console.log("Date: ", JSON.stringify(dayjs(staffObj.dob)))
         
             const [isModalOpen, setIsModalOpen] = useState(false);
         

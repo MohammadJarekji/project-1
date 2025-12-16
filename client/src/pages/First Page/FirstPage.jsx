@@ -25,8 +25,6 @@ const FirstPage = () => {
    const [lowStockProducts, setLowStockProducts] = useState([]);
    const [topProducts, setTopProducts] = useState([]);
 
-   console.log("Needed Data: ",lowStockProducts)
-
       // Example data (replace with API later)
   const stats = [
     {

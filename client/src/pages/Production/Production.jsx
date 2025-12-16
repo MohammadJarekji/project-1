@@ -167,8 +167,6 @@ const Production = () => {
              const result = await res.json();
              setData(result.production)
 
-            console.log("result: ",result.production)
-
             const productMapped = result.product.map( prod =>({
               value: prod._id,
               label: prod.name,
@@ -193,7 +191,6 @@ const Production = () => {
     }
 
     const getProductLabel = (productId) => {
-      console.log("left2: ",productId)
     const found = productSelection.find(v => v.value === productId);
     return found ? found.label : 'Unknown Product';
   };
