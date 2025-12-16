@@ -166,8 +166,6 @@ const Production = () => {
              const result = await res.json();
              setData(result.production)
 
-            console.log("result: ",result)
-
             const productMapped = result.product.map( prod =>({
               value: prod._id,
               label: prod.name,

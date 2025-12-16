@@ -17,8 +17,6 @@ const PaymentOrder = () => {
     const [data, setData] = useState([]); 
     const [selectedDate, setSelectedDate] = useState(null);
 
-console.log("Data: ",data)
-
     // /////////////////////////////////////////////////////////////////
 
       const [searchText, setSearchText] = useState('');
@@ -213,8 +211,6 @@ console.log("Data: ",data)
                 },
             })
              const result = await res.json();
-
-             console.log("Result: ",result.vendor)
 
              setData(result.paymentOrder)
 
