@@ -8,7 +8,6 @@ const useLogin = () => {
     const [loading, setLoading]=useState(null);
 
     const loginUser = async (values)=> {
-        console.log("hereee: ",JSON.stringify(values))
         try{
             setError(null);
             setLoading(true);

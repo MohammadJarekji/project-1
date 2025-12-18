@@ -1,4 +1,5 @@
 const WorkHours = require('../models/StaffWorkHoursModel');
+const Staff = require('../models/staffModel');
 const dayjs = require('dayjs');
 
 /**
@@ -51,6 +52,7 @@ const addStaffHours = async (req, res) => {
  * GET WORK HOURS (for today or specific date)
  */
 const getWorkHours = async (req, res) => {
+   console.log('staff: hello');
   try {
     const { date } = req.query;
 
@@ -62,17 +64,23 @@ const getWorkHours = async (req, res) => {
       TodayDate: currentDate.toDate(),
     });
 
+    const staff = await Staff.find();
+   
+
     if (!workHours) {
       return res.status(200).json({
         message: 'No work hours found',
         workHours: { staffHours: [] },
+        staff,
       });
     }
 
     res.status(200).json({
       message: 'Work hours retrieved successfully',
       workHours,
+      staff,
     });
+
   } catch (error) {
     console.error('Error fetching work hours:', error);
     res.status(500).json({ message: 'Internal server error' });

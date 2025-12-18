@@ -109,7 +109,7 @@ const handleSubmit = async (values) => {
                 </Form.Item>
                 
                 <Form.Item label="Hours Worked" name="hours" rules={[{ required: true, message: 'Please input hours worked!' }]}>
-                  <InputNumber min={1} max={24} placeholder="Enter staf working hours" />
+                  <InputNumber min={1} max={24} placeholder="Enter staf working hours" style={{width:'100%'}}/>
                 </Form.Item>
 
                 <Form.Item label={null}>

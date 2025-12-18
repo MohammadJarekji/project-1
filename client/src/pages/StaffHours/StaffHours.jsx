@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Space, Table, Button, Modal, Form, Input, InputNumber } from 'antd';
+import { Space, Table, Button, Modal, Form, Input, InputNumber, Select } from 'antd';
 import { SearchOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import EditStaffHoursModal from './EditStaffHoursModal';
@@ -11,6 +11,7 @@ const StaffHours = () => {
   const [newStaff, setNewStaff] = useState({ name: '', hours: '' });
   const [currentDay, setCurrentDay] = useState(dayjs()); // Start from today
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [staff, setStaff] = useState([]);
 
   // For search functionality
   const [searchText, setSearchText] = useState('');
@@ -135,6 +136,16 @@ const fetchStaffWork = async (selectedDate) => {
     } else {
       setStaffData([]); // If no data found for the selected date
     }
+
+    console.log("I want this result: ",result)
+
+    const staffMapped = result.staff.map(proj => ({
+                value: proj._id,
+                label: proj.name,
+              }));
+
+              setStaff(staffMapped)
+
   } catch (error) {
     console.error('Error fetching staff work hours:', error);
   }
@@ -227,11 +238,17 @@ const fetchStaffWork = async (selectedDate) => {
           onFinish={onFinish} // Call onFinish when form is submitted
         >
           <Form.Item label="Staff Name" name="name" rules={[{ required: true, message: 'Please input the staff name!' }]}>
-            <Input placeholder="Enter staff name" />
+            <Select
+                  showSearch
+                  placeholder="Select staff"
+                  optionFilterProp="label"
+                  options={staff}
+                  style={{ width: '100%' }}
+                />
           </Form.Item>
 
           <Form.Item label="Hours Worked" name="hours" rules={[{ required: true, message: 'Please input hours worked!' }]}>
-            <InputNumber min={1} max={24} placeholder="Enter staf working hours" />
+            <InputNumber min={1} max={24} placeholder="Enter staf working hours" style={{width:'100%'}} />
           </Form.Item>
 
           <Form.Item>
