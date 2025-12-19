@@ -10,25 +10,29 @@ exports.addProduction = async (req, res) => {
     const { productId, assembledProduct } = req.body; // productId = assembled product
     if (!productId) return res.status(400).json({ success: false, message: "Assembled product is required" });
 
-    // 1️⃣ Process component quantities
-    for (const item of assembledProduct) {
-      const componentProduct = await Product.findById(item.productId);
-      if (componentProduct) {
-        const currentQty = parseFloat(componentProduct.quantity?.toString() || '0');
-        const subtractQty = parseFloat(item.quantity?.toString() || '0');
-        componentProduct.quantity = mongoose.Types.Decimal128.fromString(
-          (currentQty - subtractQty < 0 ? 0 : currentQty - subtractQty).toString()
-        );
-        await componentProduct.save();
+    // 1️⃣ Process component quantities in assembly (if the assembled product is part of an assembly)
+    const assemblyOrder = await AssemblyOrder.findOne({ "lines.productId": productId });
+    
+    if (assemblyOrder) {
+      // If the product exists in the Assembly Order lines, subtract the quantities of the assembly components
+      for (const line of assemblyOrder.lines) {
+        const componentProduct = await Product.findById(line.productId);
+        if (componentProduct) {
+          const currentQty = parseFloat(componentProduct.quantity?.toString() || '0');
+          const subtractQty = parseFloat(line.quantity?.toString() || '0');
+          componentProduct.quantity = mongoose.Types.Decimal128.fromString(
+            (currentQty - subtractQty < 0 ? 0 : currentQty - subtractQty).toString()
+          );
+          await componentProduct.save();
+        }
       }
     }
 
-    // 2️⃣ Add quantity to assembled product itself
+    // 2️⃣ Process the assembled product itself (add to the main product quantity)
     const assembledProductRecord = await Product.findById(productId);
     if (assembledProductRecord) {
       const currentQty = parseFloat(assembledProductRecord.quantity?.toString() || '0');
       // Sum of all produced quantity, here assuming 1 production = 1 unit of product
-      // If you want multiple units, pass quantity in req.body and use it here
       const producedQty = 1;
       assembledProductRecord.quantity = mongoose.Types.Decimal128.fromString(
         (currentQty + producedQty).toString()
@@ -50,7 +54,6 @@ exports.addProduction = async (req, res) => {
     await newProductionOrder.save();
 
     return res.status(201).json({ success: true, message: 'Production added successfully' });
-
   } catch (error) {
     console.error("Error adding ProductionOrder:", error);
     return res.status(500).json({ success: false, message: 'Server error' });

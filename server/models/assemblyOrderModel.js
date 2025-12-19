@@ -57,6 +57,8 @@ const assemblySchema = new mongoose.Schema({
   timestamps: true, // adds createdAt and updatedAt
 })
 
+assemblySchema.index({ productId: 1 }, { unique: true });
+
 const Assembly = mongoose.model('Assembly', assemblySchema)
 
 module.exports= Assembly;

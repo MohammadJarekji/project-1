@@ -5,28 +5,34 @@ import {EditFilled} from '@ant-design/icons';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, productSelection, productAssemdledSelection}) => {
+const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, productSelection, productAssemdledSelection, usedData}) => {
 
       const [form] = Form.useForm();
+      const [isModalOpen, setIsModalOpen] = useState(false);
     
       // When editing: populate form fields
-      useEffect(() => {
-        if (assemblyObj) {
-          form.setFieldsValue({
-            productId: assemblyObj.productId,
-            startDate: assemblyObj.startDate ? dayjs(assemblyObj.startDate) : null,            
-            endDate: assemblyObj.endDate ? dayjs(assemblyObj.endDate) : null, 
-            laborHours: assemblyObj.laborHours,
-            status: assemblyObj.status,
-            lines: assemblyObj.lines,
-            assetId: assemblyObj.assetId,
-            hours: assemblyObj.hours,
-          });
-        }
-      }, [assemblyObj]);
+     useEffect(() => {
+  if (assemblyObj) {
+    form.setFieldsValue({
+      productId: assemblyObj.productId, // main productId
+      startDate: assemblyObj.startDate ? dayjs(assemblyObj.startDate) : null,
+      endDate: assemblyObj.endDate ? dayjs(assemblyObj.endDate) : null,
+      laborHours: assemblyObj.laborHours,
+      status: assemblyObj.status,
+      lines: assemblyObj.lines.map(line => ({
+        ...line,
+        productId: line.productId,  // Set the productId for each line item
+      })),
+      assetId: assemblyObj.assetId,
+      hours: assemblyObj.hours,
+    });
+
+  }
+}, [assemblyObj]);  // Make sure form is included in the dependency array
         
-            const [isModalOpen, setIsModalOpen] = useState(false);
+            
         
+
                   const [formData, setFormData] = useState({
                   name:"",
                   code:"",
@@ -40,6 +46,8 @@ const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, pro
         //   };
           const handleCancel = () => {
             setIsModalOpen(false);
+            setWarningMessage();
+
           };
 
            const onSearch = value => {
@@ -47,20 +55,42 @@ const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, pro
 
               const [startDate, setStartDate] = useState(null);
               const [endDate, setEndDate] = useState(null);
+              const [warningMessage, setWarningMessage] = useState('');
 
+              // Function to check if a product is already in use (excluding the current assembly)
+              const checkIfProductUsedInAssembly = (selectedProductId) => {
+                return usedData.some(
+                  (assembly) => assembly.productId === selectedProductId && assembly._id !== assemblyObj._id
+                );
+              };
 
-                            const handleSelectProductChange = (value, index) => {
-                // Find the selected product from your `product` array
-                const selectedProduct = product.find(p => p._id === value);
+              const handleMainProductChange = (value) => {
+
+                console.log("this is the value: ",value)
+                
+                 form.setFieldsValue({ productId: value });
+
+                // Check if the selected product is already used in any assembly
+                if (checkIfProductUsedInAssembly(value)) {
+                  setWarningMessage("This product has already been assembled and cannot be used again.");
+                  console.log("good")
+                } else {
+                  setWarningMessage('');  // Clear the warning if the product is not used
+                  console.log("bad")
+                 
+                }
+              };
+
+              const handleSelectProductChange = (value, index) => {
+              const selectedProduct = product.find(p => p._id === value);
 
                 if (selectedProduct) {
                   const currentValues = form.getFieldValue("lines") || [];
-
                   const updatedLines = [...currentValues];
                   updatedLines[index] = {
                     ...updatedLines[index],
                     productId: value,
-                    uomId: selectedProduct.uomId, // this must exist on product
+                    uomId: selectedProduct.uomId,
                   };
 
                   form.setFieldsValue({
@@ -69,7 +99,7 @@ const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, pro
                 }
               };
 
-                  const handleStartDateChange = (date) => {
+              const handleStartDateChange = (date) => {
               if (date) {
                 // Save formatted string like "10/8/2025"
                 const formatted = date.format('M/D/YYYY');
@@ -92,10 +122,18 @@ const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, pro
         
             const handleSubmit = async (values)=>{
                 // e.preventDefault();
+                const isProductUsed = checkIfProductUsedInAssembly(values.productId);
+
+                // If the product is already used in another assembly, display a warning and prevent submission
+                if (isProductUsed) {
+                    setWarningMessage("This product has already been assembled and cannot be used again.");
+                    return;  // Prevent form submission if the product is already in use
+                }
+
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/assembly/${assemblyObj._id}`,{
+                         const res = await fetch(`http://localhost:3000/api/assembly/${assemblyObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',
@@ -143,19 +181,26 @@ const EditAssemblyModal = ({assemblyObj, fetchAssembly, uom, asset, product, pro
              
                              <Col span={12}>
                              <Form.Item
-                             label="Assembled Product"
-                             name="productId"
-                             rules={[{ required: true, message: 'Please select an assembled product!' }]}
-                             >
-             
-                             <Select
-                               showSearch
-                               placeholder="Select an assembled product"
-                               optionFilterProp="label"
-                               onSearch={onSearch}
-                               options={productAssemdledSelection}
-                             />
-                             </Form.Item>
+                                label="Assembled Product"
+                                name="productId"
+                                rules={[{ required: true, message: 'Please select an assembled product!' }]}
+                              >
+                                <Select
+                                  showSearch
+                                  placeholder="Select an assembled product"
+                                  optionFilterProp="label"
+                                  onSearch={onSearch}
+                                  options={productAssemdledSelection}
+                                  defaultValue={assemblyObj?.productId}
+                                  onChange={handleMainProductChange}
+                                  // value={form.getFieldValue('productId')}
+                                />
+                                {warningMessage && (
+                                  <div style={{ color: 'red', marginTop: 5 }}>
+                                    {warningMessage}
+                                  </div>
+                                )}
+                              </Form.Item>
                              </Col>
              
                              <Col span={12}>

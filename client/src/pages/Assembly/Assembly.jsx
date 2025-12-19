@@ -20,6 +20,8 @@ const Assembly = () => {
     const [product, setProduct] = useState([]);
     const [productSelection, setProductSelection] = useState([]);
     const [productAssemdledSelection, setProductAssembledSelection] = useState([]);
+    const [mainProduct, setMainProduct] = useState(null);
+    const [warningMessage, setWarningMessage] = useState('');
 
 
     // /////////////////////////////////////////////////////////////////
@@ -113,13 +115,31 @@ const Assembly = () => {
 
     // ////////////////////////////////////////////////////////////////
 
-     const handleSelectProductChange = (value, index) => {
-  // Find the selected product from your `product` array
+
+// Function to check if the selected productId is already used in any assembly
+const checkIfProductUsedInAssembly = (selectedProductId) => {
+  return data.some(assembly => assembly.productId === selectedProductId);
+};
+
+const handleMainProductChange = (value) => {
+  setMainProduct(value);  // Update the main product only
+
+  // Check if the selected product is already used in any assembly
+  if (checkIfProductUsedInAssembly(value)) {
+    setWarningMessage("This product has already been assembled and cannot be used again.");
+  } else {
+    setWarningMessage('');  // Clear the warning if the product is not used
+  }
+
+  // Explicitly set the form value for 'productId' to ensure the warning is not overridden
+  form.setFieldsValue({ productId: value });
+};
+
+const handleSelectProductChange = (value, index) => {
   const selectedProduct = product.find(p => p._id === value);
 
   if (selectedProduct) {
     const currentValues = form.getFieldValue("lines") || [];
-
     const updatedLines = [...currentValues];
     updatedLines[index] = {
       ...updatedLines[index],
@@ -147,6 +167,8 @@ const Assembly = () => {
       };
       const handleCancel = () => {
         setIsModalOpen(false);
+        setWarningMessage();
+        form.resetFields();
       };
 
       const [startDate, setStartDate] = useState(null);
@@ -180,10 +202,18 @@ const Assembly = () => {
     
         const handleSubmit = async (values)=>{
             // e.preventDefault();
+               const isProductUsed = checkIfProductUsedInAssembly(values.productId);
+
+            // If the product is already used in another assembly, display a warning and prevent submission
+            if (isProductUsed) {
+                setWarningMessage("This product has already been assembled and cannot be used again.");
+                return;  // Prevent form submission if the product is already in use
+            }
+
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/assembly/add',{
+                     const res = await fetch('http://localhost:3000/api/assembly/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -192,6 +222,7 @@ const Assembly = () => {
                 });
                 const result = await res.json();
                 fetchAssembly();
+                form.resetFields();
                 handleCancel();
             }catch(error){
                 console.error("Error fetching1 user: ",error)
@@ -200,14 +231,14 @@ const Assembly = () => {
     
         const onFinish = values => {
             handleSubmit(values);
-              form.resetFields();
+              
         };
         const onFinishFailed = errorInfo => {
         };
 
     const fetchAssembly = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/assembly',{
+            const res = await fetch('http://localhost:3000/api/assembly',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -398,7 +429,7 @@ const Assembly = () => {
     render: (_, record) => (
       <Space size="middle">
         <EditAssemblyModal assemblyObj={record} fetchAssembly={fetchAssembly} uom={uom} 
-        asset={asset} product={product} productSelection={productSelection} productAssemdledSelection={productAssemdledSelection}/>
+        asset={asset} product={product} productSelection={productSelection} productAssemdledSelection={productAssemdledSelection} usedData={data}/>
         <DeleteAssemblyModal assemblyObj={record} fetchAssembly={fetchAssembly}/>
       </Space>
     ),
@@ -432,18 +463,22 @@ const Assembly = () => {
 
                 <Col span={12}>
                 <Form.Item
-                label="Assembled Product"
-                name="productId"
-                rules={[{ required: true, message: 'Please select an assembled product!' }]}
-                >
-
-                <Select
-                  showSearch
-                  placeholder="Select an assembled product"
-                  optionFilterProp="label"
-                  onSearch={onSearch}
-                  options={productAssemdledSelection}
-                />
+                  label="Assembled Product"
+                  name="productId"
+                  rules={[{ required: true, message: 'Please select an assembled product!' }]}>
+                  <Select
+                    showSearch
+                    placeholder="Select an assembled product"
+                    optionFilterProp="label"
+                    onSearch={onSearch}
+                    options={productAssemdledSelection}  // Populate with the assembled products
+                    onChange={handleMainProductChange}
+                  />
+                  {warningMessage && (
+                    <div style={{ color: 'red', marginTop: 5 }}>
+                      {warningMessage}
+                    </div>
+                  )}
                 </Form.Item>
                 </Col>
 
