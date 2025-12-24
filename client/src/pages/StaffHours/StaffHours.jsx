@@ -216,17 +216,17 @@ const fetchStaffWork = async (selectedDate) => {
         },
       ],
     },
-    ...(currentDay.isSame(dayjs(), 'day')?[
-    {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <EditStaffHoursModal StaffWorkObj={record} fetchStaffWork={fetchStaffWork}/>
-      </Space>
-    ),
-  },
-]:[]),
+//     ...(currentDay.isSame(dayjs(), 'day')?[
+//     {
+//     title: 'Action',
+//     key: 'action',
+//     render: (_, record) => (
+//       <Space size="middle">
+//         <EditStaffHoursModal StaffWorkObj={record} fetchStaffWork={fetchStaffWork}/>
+//       </Space>
+//     ),
+//   },
+// ]:[]),
   ];
 
   const handleADChange = (date) => {
@@ -268,6 +268,7 @@ const fetchStaffWork = async (selectedDate) => {
           <Form.Item
                 label="Date"
                 name="date"
+                rules={[{ required: true, message: 'Please input the date name!' }]}
                 >
                 <DatePicker 
                   onChange={handleADChange} 

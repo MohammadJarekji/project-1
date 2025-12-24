@@ -1,61 +1,76 @@
 const UOM = require('../models/uomModel');
 const Product = require('../models/productsModel');
 const ProductionOrder = require('../models/productionModel');
+const AssemblyOrder = require('../models/assemblyOrderModel');
 const Staff = require('../models/staffModel');
 const Asset = require('../models/assestModel');
 const mongoose = require('mongoose');
 
 exports.addProduction = async (req, res) => {
   try {
-    const { productId, assembledProduct } = req.body; // productId = assembled product
-    if (!productId) return res.status(400).json({ success: false, message: "Assembled product is required" });
+    const { productId, assembledProduct } = req.body; // productId = main product name
+    if (!productId || !assembledProduct || assembledProduct.length === 0) {
+      return res.status(400).json({ success: false, message: "Invalid request" });
+    }
 
-    // 1️⃣ Process component quantities in assembly (if the assembled product is part of an assembly)
-    const assemblyOrder = await AssemblyOrder.findOne({ "lines.productId": productId });
-    
-    if (assemblyOrder) {
-      // If the product exists in the Assembly Order lines, subtract the quantities of the assembly components
-      for (const line of assemblyOrder.lines) {
-        const componentProduct = await Product.findById(line.productId);
-        if (componentProduct) {
-          const currentQty = parseFloat(componentProduct.quantity?.toString() || '0');
-          const subtractQty = parseFloat(line.quantity?.toString() || '0');
-          componentProduct.quantity = mongoose.Types.Decimal128.fromString(
-            (currentQty - subtractQty < 0 ? 0 : currentQty - subtractQty).toString()
+    // Step 1: Update the main product's quantity (add 1)
+    const mainProduct = await Product.findById(productId);
+    if (!mainProduct) {
+      return res.status(404).json({ success: false, message: 'Main product not found' });
+    }
+    mainProduct.quantity = mongoose.Types.Decimal128.fromString(
+      (parseFloat(mainProduct.quantity?.toString() || '0') + 1).toString()
+    );
+    await mainProduct.save();
+
+    // Step 2: Process each assembled product and its base products
+    for (const assembledItem of assembledProduct) {
+      const assembledProductRecord = await Product.findById(assembledItem.productId);
+      if (!assembledProductRecord) {
+        return res.status(404).json({ success: false, message: `Assembled product ${assembledItem.productId} not found` });
+      }
+
+      // Subtract the assembled product's quantity
+      assembledProductRecord.quantity = mongoose.Types.Decimal128.fromString(
+        (parseFloat(assembledProductRecord.quantity?.toString() || '0') - parseFloat(assembledItem.quantity.toString())).toString()
+      );
+      await assembledProductRecord.save();
+
+      // Step 3: Look at the assembly table and update quantities of base products
+      const assembly = await AssemblyOrder.findOne({ productId: assembledItem.productId });
+      if (assembly) {
+        for (const line of assembly.lines) {
+          const baseProduct = await Product.findById(line.productId);
+          if (!baseProduct) {
+            return res.status(404).json({ success: false, message: `Base product ${line.productId} not found` });
+          }
+
+          // Calculate how many units of the base product are needed
+          const baseProductQuantity = parseFloat(line.quantity.toString()) * parseFloat(assembledItem.quantity.toString());
+
+          // Subtract the required quantity of the base product from the product table
+          baseProduct.quantity = mongoose.Types.Decimal128.fromString(
+            (parseFloat(baseProduct.quantity?.toString() || '0') - baseProductQuantity).toString()
           );
-          await componentProduct.save();
+          await baseProduct.save();
         }
       }
     }
 
-    // 2️⃣ Process the assembled product itself (add to the main product quantity)
-    const assembledProductRecord = await Product.findById(productId);
-    if (assembledProductRecord) {
-      const currentQty = parseFloat(assembledProductRecord.quantity?.toString() || '0');
-      // Sum of all produced quantity, here assuming 1 production = 1 unit of product
-      const producedQty = 1;
-      assembledProductRecord.quantity = mongoose.Types.Decimal128.fromString(
-        (currentQty + producedQty).toString()
-      );
-      await assembledProductRecord.save();
-    }
-
-    // 3️⃣ Save the production order
-    const processedProduct = assembledProduct.map(item => ({
-      productId: item.productId,
-      quantity: item.quantity !== undefined && item.quantity !== null ? mongoose.Types.Decimal128.fromString(item.quantity.toString()) : null
-    }));
-
+    // Step 4: Create the production order (assuming assembledProduct and main product info is valid)
     const newProductionOrder = new ProductionOrder({
-      productId, // assembled product
-      assembledProduct: processedProduct
+      productId, // main product
+      assembledProduct: assembledProduct.map(item => ({
+        productId: item.productId,
+        quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString())
+      }))
     });
 
     await newProductionOrder.save();
 
     return res.status(201).json({ success: true, message: 'Production added successfully' });
   } catch (error) {
-    console.error("Error adding ProductionOrder:", error);
+    console.error("Error adding Production:", error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
