@@ -45,7 +45,7 @@ const EditProductionModal = ({productionObj, fetchProduction,  productSelection,
                 setFormData(values);
                 try{
         
-                         const res = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/production/${productionObj._id}`,{
+                         const res = await fetch(`http://localhost:3000/api/production/${productionObj._id}`,{
                         method:'PUT',
                         headers:{
                             'Content-Type':'application/json',

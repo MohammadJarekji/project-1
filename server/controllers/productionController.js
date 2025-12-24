@@ -106,78 +106,73 @@ exports.getProduction = async (req, res) => {
 
 exports.updateProduction = async (req, res) => {
   try {
-    const { productionOrderId } = req.params;  // The production order ID to update
-    const { productId, assembledProduct } = req.body; // New data for editing
-
-    if (!productId || !assembledProduct || assembledProduct.length === 0) {
-      return res.status(400).json({ success: false, message: "Invalid request" });
-    }
+    const { id } = req.params;
+    const { assembledProduct, productId } = req.body;  // Getting new assembled products from the request
 
     // Step 1: Find the existing production order
-    const existingOrder = await ProductionOrder.findById(productionOrderId);
+    const existingOrder = await ProductionOrder.findById(id);
     if (!existingOrder) {
-      return res.status(404).json({ success: false, message: 'Production order not found' });
+      return res.status(404).json({ success: false, message: 'ProductionOrder not found' });
     }
 
-    // Step 2: Revert the previous quantities to how they were before the update
-    // Revert the main product quantity (subtract 1)
-    const mainProduct = await Product.findById(existingOrder.productId);
-    if (!mainProduct) {
-      return res.status(404).json({ success: false, message: 'Main product not found' });
-    }
-    mainProduct.quantity = mongoose.Types.Decimal128.fromString(
-      (parseFloat(mainProduct.quantity?.toString() || '0') - 1).toString()
-    );
-    await mainProduct.save();
+    // Step 2: Check for changes in quantities of assembled products
+    const changes = [];
+    for (const newItem of assembledProduct) {
+      const oldItem = existingOrder.assembledProduct.find(item => item.productId.toString() === newItem.productId.toString());
+      if (oldItem) {
+        const oldQty = parseFloat(oldItem.quantity.toString());
+        const newQty = parseFloat(newItem.quantity.toString());
 
-    // Revert the assembled product quantities
-    for (const assembledItem of existingOrder.assembledProduct) {
-      const assembledProductRecord = await Product.findById(assembledItem.productId);
-      if (!assembledProductRecord) {
-        return res.status(404).json({ success: false, message: `Assembled product ${assembledItem.productId} not found` });
+        // If the quantity has changed, calculate the difference
+        if (oldQty !== newQty) {
+          const diff = newQty - oldQty; // Positive for increase, negative for decrease
+          changes.push({ productId: newItem.productId, oldQty, newQty, diff });
+        }
       }
-      assembledProductRecord.quantity = mongoose.Types.Decimal128.fromString(
-        (parseFloat(assembledProductRecord.quantity?.toString() || '0') + parseFloat(assembledItem.quantity.toString())).toString()
-      );
-      await assembledProductRecord.save();
     }
 
-    // Step 3: Process the updated quantities and subtract from the main product and assembled products
-    // Update the main product quantity (add 1)
-    const updatedMainProduct = await Product.findById(productId);
-    if (!updatedMainProduct) {
-      return res.status(404).json({ success: false, message: 'Updated main product not found' });
-    }
-    updatedMainProduct.quantity = mongoose.Types.Decimal128.fromString(
-      (parseFloat(updatedMainProduct.quantity?.toString() || '0') + 1).toString()
-    );
-    await updatedMainProduct.save();
+    // Step 3: Revert quantities of base products and assembled products (if any changes)
+    for (const change of changes) {
+      const { productId, oldQty, newQty, diff } = change;
 
-    // Update the assembled products
-    for (const assembledItem of assembledProduct) {
-      const updatedAssembledProduct = await Product.findById(assembledItem.productId);
-      if (!updatedAssembledProduct) {
-        return res.status(404).json({ success: false, message: `Updated assembled product ${assembledItem.productId} not found` });
+      // Get the corresponding product in the Product table
+      const product = await Product.findById(productId);
+      if (product) {
+        // Revert the quantity of the assembled product in the Product table
+        const currentQty = parseFloat(product.quantity.toString());
+        product.quantity = mongoose.Types.Decimal128.fromString((currentQty - diff).toString());
+        await product.save();
       }
 
-      updatedAssembledProduct.quantity = mongoose.Types.Decimal128.fromString(
-        (parseFloat(updatedAssembledProduct.quantity?.toString() || '0') - parseFloat(assembledItem.quantity.toString())).toString()
-      );
-      await updatedAssembledProduct.save();
+      // Step 4: Adjust the quantities of base products (if the assembled product is updated)
+      const assembly = await AssemblyOrder.findOne({ productId });
+      if (assembly) {
+        for (const line of assembly.lines) {
+          const baseProduct = await Product.findById(line.productId);
+          if (baseProduct) {
+            const baseProductQty = parseFloat(line.quantity.toString());
+            const currentBaseQty = parseFloat(baseProduct.quantity.toString());
+            
+            // Calculate the change for base products: diff * baseProductQty
+            const baseQtyChange = diff * baseProductQty;
+            baseProduct.quantity = mongoose.Types.Decimal128.fromString((currentBaseQty - baseQtyChange).toString());
+            await baseProduct.save();
+          }
+        }
+      }
     }
 
-    // Step 4: Update the production order with the new data
-    existingOrder.productId = productId;
+    // Step 5: Update the ProductionOrder document
     existingOrder.assembledProduct = assembledProduct.map(item => ({
       productId: item.productId,
       quantity: mongoose.Types.Decimal128.fromString(item.quantity.toString())
     }));
-
     await existingOrder.save();
 
-    return res.status(200).json({ success: true, message: 'Production order updated successfully' });
+    // Step 6: Return success response
+    return res.status(200).json({ success: true, message: 'ProductionOrder updated successfully' });
   } catch (error) {
-    console.error("Error editing Production:", error);
+    console.error("Error updating ProductionOrder:", error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
