@@ -9,7 +9,7 @@ const staffSchema = new Schema({
 
 // Define the main Schema with Today Date and an array of staff objects
 const workHoursSchema = new Schema({
-  TodayDate: { type: Date, required: true }, // Store the current date
+  date: { type: Date, required: true }, // Store the current date
   staffHours: [staffSchema], // Array of staff objects
 });
 

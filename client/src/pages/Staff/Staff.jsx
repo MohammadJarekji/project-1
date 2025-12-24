@@ -158,7 +158,7 @@ const Staff = () => {
             setFormData(values)
             try{
     
-                     const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/staff/add',{
+                     const res = await fetch('http://localhost:3000/api/staff/add',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json',
@@ -182,7 +182,7 @@ const Staff = () => {
 
     const fetchStaff = async ()=>{
         try{
-            const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/staff',{
+            const res = await fetch('http://localhost:3000/api/staff',{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',

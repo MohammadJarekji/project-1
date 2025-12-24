@@ -7,35 +7,41 @@ const dayjs = require('dayjs');
  */
 const addStaffHours = async (req, res) => {
   try {
-    const { name, hours } = req.body;
+    const { name, hours, date } = req.body; // Extract name, hours, and date
 
-    if (!name || hours === undefined) {
-      return res.status(400).json({ message: 'Name and hours are required' });
+    if (!name || hours === undefined || !date) {
+      return res.status(400).json({ message: 'Name, hours, and date are required' });
     }
 
-    const currentDate = dayjs().startOf('day');
+    const currentDate = dayjs(date).startOf('day'); // Normalize the date
 
+    // Find existing work hours for the selected date
     let workHours = await WorkHours.findOne({
-      TodayDate: currentDate.toDate(),
+      date: currentDate.toDate(),
     });
 
+    // If no work hours exist for that date, create a new entry
     if (!workHours) {
       workHours = new WorkHours({
-        TodayDate: currentDate.toDate(),
+        date: currentDate.toDate(),
         staffHours: [{ name, hours: Number(hours) }],
       });
     } else {
+      // If work hours exist, check if the staff member already exists
       const staffIndex = workHours.staffHours.findIndex(
         (staff) => staff.name === name
       );
 
       if (staffIndex === -1) {
+        // Add new staff if not found
         workHours.staffHours.push({ name, hours: Number(hours) });
       } else {
+        // Update existing staff's hours
         workHours.staffHours[staffIndex].hours = Number(hours);
       }
     }
 
+    // Save the updated work hours
     await workHours.save();
 
     res.status(200).json({
@@ -52,35 +58,37 @@ const addStaffHours = async (req, res) => {
  * GET WORK HOURS (for today or specific date)
  */
 const getWorkHours = async (req, res) => {
-   console.log('staff: hello');
   try {
-    const { date } = req.query;
+    const { date } = req.query; // Date passed in query (optional)
 
+    // Use provided date, or default to today's date if none is given
     const currentDate = date
       ? dayjs(date).startOf('day')
       : dayjs().startOf('day');
 
+    // Find work hours for the selected date
     const workHours = await WorkHours.findOne({
-      TodayDate: currentDate.toDate(),
+      date: currentDate.toDate(),
     });
 
-    const staff = await Staff.find();
-   
+    // Fetch all staff data (to display in a dropdown or for other purposes)
+    const staff = await Staff.find(); 
 
+    // If no work hours are found for the selected date
     if (!workHours) {
       return res.status(200).json({
-        message: 'No work hours found',
-        workHours: { staffHours: [] },
-        staff,
+        message: 'No work hours found for the selected date',
+        workHours: { staffHours: [] }, // Return empty staffHours if none found
+        staff, // Return staff list
       });
     }
 
+    // If work hours exist, return the data along with staff
     res.status(200).json({
       message: 'Work hours retrieved successfully',
-      workHours,
-      staff,
+      workHours, // Contains the staff hours for that date
+      staff, // Contains the list of all staff
     });
-
   } catch (error) {
     console.error('Error fetching work hours:', error);
     res.status(500).json({ message: 'Internal server error' });

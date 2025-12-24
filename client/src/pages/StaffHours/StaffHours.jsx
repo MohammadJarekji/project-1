@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Space, Table, Button, Modal, Form, Input, InputNumber, Select } from 'antd';
+import { Space, Table, Button, Modal, Form, Input, InputNumber, Select, DatePicker } from 'antd';
 import { SearchOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import EditStaffHoursModal from './EditStaffHoursModal';
 import dayjs from 'dayjs';
+import DeleteStaffHoursModal from './DeleteStaffHoursModal';
 
 const StaffHours = () => {
   const [form] = Form.useForm();
@@ -12,6 +13,7 @@ const StaffHours = () => {
   const [currentDay, setCurrentDay] = useState(dayjs()); // Start from today
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [staff, setStaff] = useState([]);
+  const [selectedAD, setselectedAD] = useState(null);
 
   // For search functionality
   const [searchText, setSearchText] = useState('');
@@ -95,7 +97,7 @@ const StaffHours = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const res = await fetch(import.meta.env.VITE_URL_BASE_APP +'/api/StaffWorkHours/add', {
+      const res = await fetch('http://localhost:3000/api/StaffWorkHours/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +123,7 @@ const fetchStaffWork = async (selectedDate) => {
     const dateToFetch = selectedDate ? dayjs(selectedDate).startOf('day') : dayjs().startOf('day');
 
     const res = await fetch(
-      `${import.meta.env.VITE_URL_BASE_APP}/api/StaffWorkHours?date=${dateToFetch.toISOString()}`, // Pass the valid date
+      `http://localhost:3000/api/StaffWorkHours?date=${dateToFetch.toISOString()}`, // Pass the valid date
       {
         method: 'GET',
         headers: {
@@ -150,6 +152,11 @@ const fetchStaffWork = async (selectedDate) => {
     console.error('Error fetching staff work hours:', error);
   }
 };
+
+  const getStaffLabel = (staffId) => {
+    const found = staff.find(v => v.value === staffId);
+    return found ? found.label : 'Unknown staff';
+  };
 
   useEffect(() => {
     fetchStaffWork(currentDay); // Initial data fetch for today
@@ -199,6 +206,7 @@ const fetchStaffWork = async (selectedDate) => {
           dataIndex: 'name',
           key: 'name',
           ...getColumnSearchProps('name'),
+          render: (text, record) => getStaffLabel(record.name),
         },
         {
           title: 'Hours',
@@ -220,6 +228,16 @@ const fetchStaffWork = async (selectedDate) => {
   },
 ]:[]),
   ];
+
+  const handleADChange = (date) => {
+    if (date) {
+      // Save formatted string like "10/8/2025"
+      const formatted = date.format('M/D/YYYY');
+      setselectedAD(formatted);
+    } else {
+      setselectedAD(null);
+    }
+  };
 
   return (
     <>
@@ -246,6 +264,18 @@ const fetchStaffWork = async (selectedDate) => {
                   style={{ width: '100%' }}
                 />
           </Form.Item>
+
+          <Form.Item
+                label="Date"
+                name="date"
+                >
+                <DatePicker 
+                  onChange={handleADChange} 
+                  style={{width:'100%'}}
+                  format="M/D/YYYY"
+                  value={selectedAD && dayjs(selectedAD, 'M/D/YYYY').isValid() ? dayjs(selectedAD, 'M/D/YYYY') : null}
+                  />
+                </Form.Item>
 
           <Form.Item label="Hours Worked" name="hours" rules={[{ required: true, message: 'Please input hours worked!' }]}>
             <InputNumber min={1} max={24} placeholder="Enter staf working hours" style={{width:'100%'}} />

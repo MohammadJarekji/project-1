@@ -2,19 +2,19 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Button, Modal, Space } from 'antd';
 import {DeleteFilled} from '@ant-design/icons';
 
-const DeleteCurrencyModal = ({currencyObj, fetchCurrency}) => {
+const DeleteStaffHoursModal = ({StaffWorkObj, fetchStaffWork}) => {
 
         const { confirm } = Modal;
     
                         const handleDelete = async (id)=>{           
                         try{
-                            const response = await fetch(`${import.meta.env.VITE_URL_BASE_APP}/api/currency/${id}`,{
+                            const response = await fetch(`http://localhost:3000/api/StaffWorkHours/${id}`,{
                                     method:'DELETE',
                                 }
                             );
                             const result = await response.json();
                             if(result.success){
-                                fetchCurrency();
+                                fetchStaffWork();
                             }   else{
                                     console.error("Error deleting Currency: ",result.message)
                                 }
@@ -29,7 +29,7 @@ const DeleteCurrencyModal = ({currencyObj, fetchCurrency}) => {
         icon: <ExclamationCircleFilled />,
         content: 'Some descriptions',
         onOk() {
-            handleDelete(currencyObj._id)
+            handleDelete(StaffWorkObj._id)
         },
         onCancel() {
         },
@@ -41,4 +41,4 @@ const DeleteCurrencyModal = ({currencyObj, fetchCurrency}) => {
     )
 }
 
-export default DeleteCurrencyModal
+export default DeleteStaffHoursModal
